@@ -70,8 +70,9 @@ def show_params(field_name):
 def medihunter():
     pass
 
+medihunter.add_command(show_params)
+medihunter.add_command(find_appointment)
+
 
 if __name__ == '__main__':
-    medihunter.add_command(show_params)
-    medihunter.add_command(find_appointment)
     medihunter()

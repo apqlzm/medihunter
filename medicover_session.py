@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from collections import namedtuple
 
@@ -239,9 +240,10 @@ def load_available_search_params(field_name):
     field_name = FIELDS_NAMES[field_name]
 
     params_file_content = ''
-    # TODO: path should be dynamic
-    # with open('/home/apqlzm/Workspace/medihunter_/medihunter_scripts/ids/params.json') as f:
-    with open('../ids/params.json') as f:
+    
+    params_path = os.path.join(os.path.dirname(__file__), 'ids/params.json')
+
+    with open(params_path) as f:
         params_file_content = f.read()
 
     params = json.loads(params_file_content)
