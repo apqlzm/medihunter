@@ -1,0 +1,842 @@
+{
+    "availableRegions": [
+        {
+            "text": "(Wybierz)",
+            "id": -2
+        },
+        {
+            "text": "Białystok",
+            "id": 102426
+        },
+        {
+            "text": "Bielsko-Biała",
+            "id": 104450
+        },
+        {
+            "text": "Bydgoszcz",
+            "id": 102424
+        },
+        {
+            "text": "Częstochowa ",
+            "id": 115682
+        },
+        {
+            "text": "Elbląg Loop",
+            "id": 114060
+        },
+        {
+            "text": "Gliwice",
+            "id": 102200
+        },
+        {
+            "text": "Inowrocław",
+            "id": 116902
+        },
+        {
+            "text": "Katowice",
+            "id": 203
+        },
+        {
+            "text": "Kielce",
+            "id": 109674
+        },
+        {
+            "text": "Kostrzyn n/Odrą",
+            "id": 104720
+        },
+        {
+            "text": "Kraków",
+            "id": 202
+        },
+        {
+            "text": "Kwidzyn",
+            "id": 113854
+        },
+        {
+            "text": "Leszno",
+            "id": 117524
+        },
+        {
+            "text": "Lublin",
+            "id": 100032
+        },
+        {
+            "text": "Łódź",
+            "id": 199
+        },
+        {
+            "text": "Olsztyn ",
+            "id": 117526
+        },
+        {
+            "text": "Poznań",
+            "id": 207
+        },
+        {
+            "text": "Szczecin",
+            "id": 206
+        },
+        {
+            "text": "TeleCentrum",
+            "id": 105814
+        },
+        {
+            "text": "Toruń ",
+            "id": 117528
+        },
+        {
+            "text": "Trójmiasto",
+            "id": 200
+        },
+        {
+            "text": "Warszawa",
+            "id": 204
+        },
+        {
+            "text": "Wrocław",
+            "id": 205
+        }
+    ],
+    "availableBookingTypes": [
+        {
+            "text": "Konsultacja",
+            "id": 2
+        }
+    ],
+    "availableDiagnosticProcedures": [],
+    "availableSpecializations": [
+        {
+            "text": "(Wybierz)",
+            "id": -2
+        },
+        {
+            "text": "  Medicover Express - przeziębienie, grypa",
+            "id": 16234
+        },
+        {
+            "text": " Medicover Express - szczepienia dorośli",
+            "id": 16236
+        },
+        {
+            "text": "Alergolog dorośli",
+            "id": 176
+        },
+        {
+            "text": "Alergolog dorośli odczulanie",
+            "id": 178
+        },
+        {
+            "text": "Badanie dna oka - dorośli",
+            "id": 11682
+        },
+        {
+            "text": "Chirurg dorośli ",
+            "id": 2
+        },
+        {
+            "text": "Chirurg naczyniowy",
+            "id": 78
+        },
+        {
+            "text": "Chirurg stomatolog - leczenie",
+            "id": 28760
+        },
+        {
+            "text": "Chirurg szczękowo-twarzowy - leczenie",
+            "id": 28762
+        },
+        {
+            "text": "Choroby zakaźne dorośli",
+            "id": 1190
+        },
+        {
+            "text": "Cytologia",
+            "id": 6254
+        },
+        {
+            "text": "Dermatolog dorośli",
+            "id": 3
+        },
+        {
+            "text": "Dermatolog dorośli - porada telefoniczna",
+            "id": 43852
+        },
+        {
+            "text": "Diabetolog",
+            "id": 99
+        },
+        {
+            "text": "Diabetolog - porada telefoniczna",
+            "id": 29178
+        },
+        {
+            "text": "Dietetyk dorośli",
+            "id": 182
+        },
+        {
+            "text": "Endodonta - leczenie",
+            "id": 28764
+        },
+        {
+            "text": "Endokrynolog - porada telefoniczna",
+            "id": 27962
+        },
+        {
+            "text": "Endokrynolog dorośli",
+            "id": 5
+        },
+        {
+            "text": "Gastroenterolog dorośli",
+            "id": 42
+        },
+        {
+            "text": "Gastroenterolog dorośli - porada telefoniczna",
+            "id": 44054
+        },
+        {
+            "text": "Ginekolog - porada telefoniczna",
+            "id": 32818
+        },
+        {
+            "text": "Ginekolog - prowadzenie ciąży",
+            "id": 4800
+        },
+        {
+            "text": "Ginekolog dorośli",
+            "id": 4798
+        },
+        {
+            "text": "Ginekolog Endokrynolog dorośli",
+            "id": 32
+        },
+        {
+            "text": "Hepatolog",
+            "id": 54
+        },
+        {
+            "text": "Higienistka stomatologiczna",
+            "id": 112
+        },
+        {
+            "text": "Implantolog - leczenie",
+            "id": 29394
+        },
+        {
+            "text": "Internista",
+            "id": 9
+        },
+        {
+            "text": "Internista - porada telefoniczna",
+            "id": 19046
+        },
+        {
+            "text": "Internista - szczepienie",
+            "id": 5030
+        },
+        {
+            "text": "Internista - szczepienie grypa",
+            "id": 486
+        },
+        {
+            "text": "Internista dyżurny",
+            "id": 7338
+        },
+        {
+            "text": "Kardiolog dorośli",
+            "id": 10
+        },
+        {
+            "text": "Kardiolog dorośli - porada telefoniczna",
+            "id": 43652
+        },
+        {
+            "text": "Laryngolog dorośli",
+            "id": 192
+        },
+        {
+            "text": "Logopeda dorośli",
+            "id": 96
+        },
+        {
+            "text": "Medycyna podróży",
+            "id": 149
+        },
+        {
+            "text": "Medycyna podróży - dorośli",
+            "id": 9976
+        },
+        {
+            "text": "Medycyna Rodzinna - dorośli",
+            "id": 1586
+        },
+        {
+            "text": "Medycyna Rodzinna - szczepienia (dorośli)",
+            "id": 9180
+        },
+        {
+            "text": "Medycyna Sportowa",
+            "id": 1986
+        },
+        {
+            "text": "Nefrolog dorośli",
+            "id": 33
+        },
+        {
+            "text": "Neurochirurg",
+            "id": 80
+        },
+        {
+            "text": "Neurolog dorośli",
+            "id": 16
+        },
+        {
+            "text": "Okulista dorośli",
+            "id": 198
+        },
+        {
+            "text": "Okulistyka/Optometria - dobór okularów",
+            "id": 19054
+        },
+        {
+            "text": "Okulistyka/Optometria - dobór soczewek kontaktowych",
+            "id": 22694
+        },
+        {
+            "text": "Onkolog dorośli",
+            "id": 79
+        },
+        {
+            "text": "Ortodonta - leczenie",
+            "id": 28766
+        },
+        {
+            "text": "Ortodonta Invisalign",
+            "id": 39836
+        },
+        {
+            "text": "Ortopeda dorośli",
+            "id": 163
+        },
+        {
+            "text": "Ortopeda dorośli - porada telefoniczna",
+            "id": 44058
+        },
+        {
+            "text": "Ortopeda dorośli i dzieci",
+            "id": 202
+        },
+        {
+            "text": "Pedodonta",
+            "id": 1196
+        },
+        {
+            "text": "Periodontolog - leczenie",
+            "id": 28768
+        },
+        {
+            "text": "Pielęgniarka - analiza składu masy ciała",
+            "id": 32196
+        },
+        {
+            "text": "Poradnia bólu pleców",
+            "id": 16844
+        },
+        {
+            "text": "Poradnia Układu Ruchu - dorośli",
+            "id": 27158
+        },
+        {
+            "text": "Poradnia Układu Ruchu - dzieci",
+            "id": 27160
+        },
+        {
+            "text": "Psychiatra dorośli",
+            "id": 24
+        },
+        {
+            "text": "Pulmonolog dorośli",
+            "id": 41
+        },
+        {
+            "text": "Reumatolog dorośli",
+            "id": 26
+        },
+        {
+            "text": "Specjalista protetyki stomatologicznej - leczenie",
+            "id": 28770
+        },
+        {
+            "text": "Stomatolog - leczenie",
+            "id": 23504
+        },
+        {
+            "text": "Stomatolog - przegląd",
+            "id": 22890
+        },
+        {
+            "text": "Stomatolog dziecięcy - leczenie",
+            "id": 28772
+        },
+        {
+            "text": "Urolog dorośli",
+            "id": 30
+        }
+    ],
+    "availableClinics": [
+        {
+            "text": "(Dowolne)",
+            "id": -1
+        },
+        {
+            "text": "Centrum Medicover Aleje Jerozolimskie",
+            "id": 12292
+        },
+        {
+            "text": "Centrum Medicover Atrium",
+            "id": 174
+        },
+        {
+            "text": "Centrum Medicover Grochowska",
+            "id": 45054
+        },
+        {
+            "text": "Centrum Medicover Inflancka",
+            "id": 6896
+        },
+        {
+            "text": "Centrum Medicover Klimczaka",
+            "id": 34136
+        },
+        {
+            "text": "Centrum Medicover Łukiska",
+            "id": 49284
+        },
+        {
+            "text": "Centrum Medicover Prosta",
+            "id": 49088
+        },
+        {
+            "text": "Centrum Medicover Puławska",
+            "id": 3154
+        },
+        {
+            "text": "Centrum Medicover Tarchomin",
+            "id": 11064
+        },
+        {
+            "text": "Centrum Medicover Wołoska",
+            "id": 12396
+        },
+        {
+            "text": "Centrum Medycyny Pracy Medicover - Cybernetyki",
+            "id": 27276
+        },
+        {
+            "text": "Medi Partner Jana Kazimierza 28",
+            "id": 25212
+        },
+        {
+            "text": "Medvit Medi Partner Piaseczno",
+            "id": 29212
+        }
+    ],
+    "availableLanguages": [
+        {
+            "text": "(Dowolny)",
+            "id": -1
+        },
+        {
+            "text": "Angielski",
+            "id": 6
+        },
+        {
+            "text": "Arabski",
+            "id": 48
+        },
+        {
+            "text": "Francuski",
+            "id": 12
+        },
+        {
+            "text": "Hiszpański",
+            "id": 26
+        },
+        {
+            "text": "Niemiecki",
+            "id": 14
+        },
+        {
+            "text": "Rosyjski",
+            "id": 16
+        }
+    ],
+    "availableDoctors": [
+        {
+            "text": "(Dowolny)",
+            "id": -1
+        },
+        {
+            "text": "Abu - Shawareb Ghassan",
+            "id": 138374
+        },
+        {
+            "text": "Andrzejewska Magdalena",
+            "id": 312218
+        },
+        {
+            "text": "Bałan Barbara",
+            "id": 139974
+        },
+        {
+            "text": "Bel Hadj Hamida Melika",
+            "id": 227040
+        },
+        {
+            "text": "Bill Małgorzata",
+            "id": 312240
+        },
+        {
+            "text": "Błaszczyszyn Maciej",
+            "id": 298772
+        },
+        {
+            "text": "Bogacka Elżbieta",
+            "id": 230068
+        },
+        {
+            "text": "Bosek Irina",
+            "id": 129874
+        },
+        {
+            "text": "Buczyńska - Barbachowska Aleksandra",
+            "id": 393
+        },
+        {
+            "text": "Chojnacki Tomasz",
+            "id": 145462
+        },
+        {
+            "text": "Chudzicka Aleksandra",
+            "id": 276696
+        },
+        {
+            "text": "Ciepielowska Ewa",
+            "id": 808
+        },
+        {
+            "text": "Dobrenko Daniel",
+            "id": 200766
+        },
+        {
+            "text": "Drozdowski Robert",
+            "id": 662
+        },
+        {
+            "text": "Duda Beata",
+            "id": 101682
+        },
+        {
+            "text": "Dudzińska Katarzyna",
+            "id": 301592
+        },
+        {
+            "text": "Dylewski Krzysztof",
+            "id": 17756
+        },
+        {
+            "text": "Dźwiarek Katarzyna",
+            "id": 258770
+        },
+        {
+            "text": "Falbowska Anna",
+            "id": 258800
+        },
+        {
+            "text": "Gaworczyk Włodzimierz",
+            "id": 220048
+        },
+        {
+            "text": "Gąsior Robert",
+            "id": 147150
+        },
+        {
+            "text": "Giżyński Sławomir",
+            "id": 664
+        },
+        {
+            "text": "Głowala Anna",
+            "id": 131620
+        },
+        {
+            "text": "Gościniak Małgorzata",
+            "id": 147580
+        },
+        {
+            "text": "Gryglewicz Joanna",
+            "id": 5550
+        },
+        {
+            "text": "Guranowski Tomasz",
+            "id": 12554
+        },
+        {
+            "text": "Hołowiecka Aleksandra",
+            "id": 250492
+        },
+        {
+            "text": "Janus - Łuczycka Anna",
+            "id": 103440
+        },
+        {
+            "text": "Jarecka - Szmajdzińska Katarzyna",
+            "id": 2102
+        },
+        {
+            "text": "Jaworska - Wilczyńska Maria",
+            "id": 2548
+        },
+        {
+            "text": "Kaczmarska Dorota",
+            "id": 264608
+        },
+        {
+            "text": "Kasprzycka Katarzyna",
+            "id": 102422
+        },
+        {
+            "text": "Kiprian- Łyczek Joanna",
+            "id": 236322
+        },
+        {
+            "text": "Klej Urszula",
+            "id": 118554
+        },
+        {
+            "text": "Klimaszewska Ewa",
+            "id": 101688
+        },
+        {
+            "text": "Komorowski Piotr",
+            "id": 6468
+        },
+        {
+            "text": "Kopacz Rafał",
+            "id": 208192
+        },
+        {
+            "text": "Kotkowska Anna",
+            "id": 109106
+        },
+        {
+            "text": "Kozłowska Anna",
+            "id": 1527
+        },
+        {
+            "text": "Koźbiał Małgorzata",
+            "id": 5560
+        },
+        {
+            "text": "Koźluk Jolanta",
+            "id": 18162
+        },
+        {
+            "text": "Krajewska Agnieszka",
+            "id": 210826
+        },
+        {
+            "text": "Krysztopowicz - Sobura Katarzyna",
+            "id": 18160
+        },
+        {
+            "text": "Kupisz - Urbańska Małgorzata",
+            "id": 173428
+        },
+        {
+            "text": "Laskowska - Goławska Beata",
+            "id": 1456
+        },
+        {
+            "text": "Lewandowska - Durka Alina",
+            "id": 135858
+        },
+        {
+            "text": "Lhosar Yeshi Sangpo",
+            "id": 312414
+        },
+        {
+            "text": "Lorens - Litka Zofia",
+            "id": 114312
+        },
+        {
+            "text": "Maciejewska Katarzyna",
+            "id": 103424
+        },
+        {
+            "text": "Maksymowicz Magdalena",
+            "id": 306172
+        },
+        {
+            "text": "Marszałek Magdalena",
+            "id": 169440
+        },
+        {
+            "text": "Matryba Magdalena",
+            "id": 230904
+        },
+        {
+            "text": "Mazur Dariusz",
+            "id": 103360
+        },
+        {
+            "text": "Mierzwa - Gołębiewska Izabela",
+            "id": 236892
+        },
+        {
+            "text": "Moes - Wójtowicz Alicja Anna",
+            "id": 247694
+        },
+        {
+            "text": "Mrożek Jarosław",
+            "id": 1415
+        },
+        {
+            "text": "Olczyk - Wrochna Katarzyna",
+            "id": 258554
+        },
+        {
+            "text": "Orłowski Stanisław",
+            "id": 663
+        },
+        {
+            "text": "Osowska Alina",
+            "id": 5556
+        },
+        {
+            "text": "Pawłowski Wojciech",
+            "id": 133322
+        },
+        {
+            "text": "Piątkiewicz Agnieszka",
+            "id": 16554
+        },
+        {
+            "text": "Piechota Wiktor",
+            "id": 105128
+        },
+        {
+            "text": "Plucik - Mrożek Anna",
+            "id": 104798
+        },
+        {
+            "text": "Poręba Agata",
+            "id": 301786
+        },
+        {
+            "text": "Pośnik - Kisło Anna",
+            "id": 294042
+        },
+        {
+            "text": "Pszenna Ewa",
+            "id": 14050
+        },
+        {
+            "text": "Pustułka Katarzyna",
+            "id": 258148
+        },
+        {
+            "text": "Puszyński Zygmunt",
+            "id": 220058
+        },
+        {
+            "text": "Ruszkowska - Kowalska Elżbieta",
+            "id": 2208
+        },
+        {
+            "text": "Rzeszotarska - Matuszewska Wioletta",
+            "id": 289316
+        },
+        {
+            "text": "Sandzewicz Elżbieta",
+            "id": 1614
+        },
+        {
+            "text": "Senderska Anna",
+            "id": 286080
+        },
+        {
+            "text": "Staszków Monika",
+            "id": 244484
+        },
+        {
+            "text": "Stec Alicja",
+            "id": 266664
+        },
+        {
+            "text": "Strzałkowska Agnieszka",
+            "id": 227268
+        },
+        {
+            "text": "Styczyńska Teresa",
+            "id": 120064
+        },
+        {
+            "text": "Szwench - Pietrasz Elżbieta",
+            "id": 290200
+        },
+        {
+            "text": "Śliwińska - Wasilewska Anna",
+            "id": 6850
+        },
+        {
+            "text": "Wach Aleksandra",
+            "id": 312258
+        },
+        {
+            "text": "Wachowska - Kępka Iwona",
+            "id": 399
+        },
+        {
+            "text": "Wencel - Rogozińska Weronika",
+            "id": 100238
+        },
+        {
+            "text": "Wierzbicka Iwona",
+            "id": 387
+        },
+        {
+            "text": "Wojciechowska Sylwia",
+            "id": 10188
+        },
+        {
+            "text": "Wójtowicz Bożena",
+            "id": 143634
+        },
+        {
+            "text": "Wretowska Dorota",
+            "id": 264638
+        },
+        {
+            "text": "Zembrzuski Ryszard",
+            "id": 4752
+        },
+        {
+            "text": "Żmijewski Andrzej",
+            "id": 173230
+        }
+    ],
+    "criteria": {
+        "regionId": 204,
+        "bookingTypeId": 2,
+        "specializationId": 9,
+        "clinicId": -1,
+        "doctorId": -1,
+        "serviceId": null,
+        "languageId": -1,
+        "searchSince": "2018-11-17T05:00:00+01:00",
+        "searchForNextSince": null,
+        "periodOfTheDay": 0,
+        "isSetBecauseOfPcc": false,
+        "isSetBecausePromoteSpecialization": false
+    },
+    "canSearch": true
+}

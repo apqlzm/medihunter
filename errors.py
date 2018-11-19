@@ -1,0 +1,2 @@
+class IdsrvXsrfNotFound(Exception):
+    pass
