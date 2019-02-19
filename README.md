@@ -2,6 +2,9 @@
 
 Narzędzia służy do automatycznego wyszukiwania wizyt u lekarzy. Szczególnie przydaje się gdy wizyty są trudno dostępne ;)
 
+**Działa z pythonem w wersji 3.6+**
+
+
 ## Instalacja
 
 Aktywujemy virtualenva (opcjonalnie choć zalecane)
