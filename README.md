@@ -4,6 +4,9 @@ Narzędzia służy do automatycznego wyszukiwania wizyt u lekarzy. Szczególnie 
 
 **Działa z pythonem w wersji 3.6+**
 
+<p align="center">
+    <img src="https://apqlzm.github.io/theme/images/icons/search-every-minute.svg">
+</p>
 
 ## Instalacja
 
