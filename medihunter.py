@@ -17,9 +17,10 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.option('--region', '-r', default=204)
 @click.option('--specialization', '-s', default=16234)
 @click.option('--clinic', '-c', default=-1)
+@click.option('--doctor', '-o', default=-1)
 @click.option('--start-date', '-d', default=now_formatted)
 @click.option('--interval', '-i', default=0)
-def find_appointment(user, password, region, specialization, clinic, start_date, interval):
+def find_appointment(user, password, region, specialization, clinic, doctor, start_date, interval):
     counter = 0
     med_session = MedicoverSession(username=user, password=password)
     
@@ -35,7 +36,7 @@ def find_appointment(user, password, region, specialization, clinic, start_date,
 
     while interval > 0 or counter < 1:
         appointments = med_session.search_appointments(
-            region=region, specialization=specialization, clinic=clinic, start_date=start_date)
+            region=region, specialization=specialization, clinic=clinic, doctor=doctor, start_date=start_date)
 
         if not appointments:
             click.echo(click.style(
