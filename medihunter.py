@@ -1,6 +1,7 @@
 import json
 import time
 from datetime import datetime
+from pushover import Client
 
 import click
 
@@ -20,10 +21,23 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.option('--doctor', '-o', default=-1)
 @click.option('--start-date', '-d', default=now_formatted)
 @click.option('--interval', '-i', default=0)
-def find_appointment(user, password, region, specialization, clinic, doctor, start_date, interval):
+@click.option('--pushover_token', default="")
+@click.option('--pushover_user', default="")
+@click.option('--pushover_device', default=None)
+def find_appointment(user, password, region, specialization, clinic, doctor, start_date, interval, pushover_token, pushover_user,pushover_device):
     counter = 0
     med_session = MedicoverSession(username=user, password=password)
-    
+
+    if (pushover_user != "") and (pushover_token != ""):
+        try :
+            client = Client(user_key=pushover_user, api_token=pushover_token)
+            pushover_notification = True
+        except Exception:
+            click.secho('Pushover not initialized correctly', fg='red')
+            return
+    else :
+        pushover_notification = False
+
     try :
         r = med_session.log_in()
     except Exception:
@@ -43,6 +57,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                 f'(iteration: {counter}) No results found', fg='yellow'))
         else:
             applen = len(appointments)
+            notification = ""
             click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments', fg='green', blink=True))
             for appointment in appointments:
                 click.echo(
@@ -50,6 +65,8 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                     click.style(appointment.doctor_name, fg='bright_green') + ' ' +
                     appointment.clinic_name
                 )
+                if pushover_notification : notification = notification + appointment.appointment_datetime + ' ' + appointment.doctor_name + ' ' + appointment.clinic_name + '\n'
+            if pushover_notification : client.send_message(notification, title="Found " + str(applen) + " appointments", device=pushover_device)
         counter += 1
         time.sleep(interval*60)
 
