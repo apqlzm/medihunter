@@ -28,7 +28,7 @@ Od teraz mamy dostępną w virtualenvie komendę **medihunter**
 
 ### show-params
 
-Gdy wyszukujemy wizyty musimy podać miasto, placówkę medyczną, specjalizację (jaki to ma być lekarz), datę wizyty (wizyta zacznie się nie wcześniej niż ta data). Każdy z tych parametrów (z wyjątkiem daty) ma przypisany nr id. Żeby go poznać używamy do tego komendy *show-params*.
+Gdy wyszukujemy wizyty musimy podać miasto, placówkę medyczną, specjalizację (jaki to ma być lekarz), identyfikator lekarza (możliwość wybrania konkretnego lekarza), datę wizyty (wizyta zacznie się nie wcześniej niż ta data). Każdy z tych parametrów (z wyjątkiem daty) ma przypisany nr id. Żeby go poznać używamy do tego komendy *show-params*.
 
 id specjalizacji
 
@@ -84,5 +84,6 @@ opcja|domyślna wartość
 -r, --region|Warszawa 
 -s, --specialization|Medicover Express - przeziębienie, grypa
 -c, --clinic|wszystkie jakie są w regionie/mieście
+-o, --doctor|wszyscy lekarze
 -d, --start-date|data bieżąca
 -i, --interval|brak
