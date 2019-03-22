@@ -84,6 +84,6 @@ opcja|domyślna wartość
 -r, --region|Warszawa 
 -s, --specialization|Medicover Express - przeziębienie, grypa
 -c, --clinic|wszystkie jakie są w regionie/mieście
--o, --doctor|wszuscy lekarze
+-o, --doctor|wszyscy lekarze
 -d, --start-date|data bieżąca
 -i, --interval|brak
