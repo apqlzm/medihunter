@@ -83,8 +83,6 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
             if len(notification) > 1020 : notification = notification [0:960] + '<b><font color="#ff0000"> + more appointments online</font></b>'
             if len(pushover_msgtitle) > 0 : pushover_msgtitle = pushover_msgtitle + ': '
             client.send_message(notification, title=pushover_msgtitle + "Found " + str(notificationcounter) + " appointments", device=pushover_device,html=1)
-        else :
-            client.send_message("Nothing :(", title="Nic nie ma") 
 
         counter += 1
         time.sleep(interval*60)
