@@ -56,7 +56,7 @@ Oczywiście znalezienie wizyty do endokrynologa nie jest takie proste, więc ust
 medihunter find-appointment -s 27962 -i 1
 ```
 
-a może chcemy poszukać konkretnych endokrynolgów od ID 12345 i 0987 ?
+a może chcemy poszukać konkretnych endokrynolgów o ID: 12345 i 0987 ?
 
 ```bash
 medihunter find-appointment -s 27962 -i 1 -o 12345 -o 0987
@@ -79,8 +79,7 @@ medihunter show-params --help
 
 ## Powiadomienia Pushover
 
-Poprzez podanie parametrów do powiadomień Pushover https://pushover.net/ możliwe jest przekazywanie powiadomień na wizytę do aplikacji Pushover.
-Należey podać minimalnie parametry --pushover_token oraz --pushover_user
+Poprzez podanie parametrów do powiadomień Poshover https://pushover.net/ możliwe jest przekazywanie powiadomień na wizytę bezpośrednio do aplikacji. Należy podać minimalnie parametry --pushover_token oraz --pushover_user
 
 
 ## Domyślne ustawienia
