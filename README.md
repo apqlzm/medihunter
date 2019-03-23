@@ -59,7 +59,13 @@ medihunter find-appointment -s 27962 -i 1
 a może chcemy poszukać konkretnych endokrynolgów o ID: 12345 i 0987 ?
 
 ```bash
-medihunter find-appointment -s 27962 -i 1 -o 12345 -o 0987
+medihunter find-appointment -s 27962 -o 12345 -o 0987
+```
+
+a może po prostu szukamy dowolnego internisty w przychodniach blisko nas w Atrium i na Prostej ?
+
+```bash
+medihunter find-appointment -s 9 -c 174 -c 49088
 ```
 
 ## Wyświetlanie pomocy
@@ -94,8 +100,8 @@ opcja|domyślna wartość
 -----|----------------
 -r, --region|Warszawa 
 -s, --specialization|Medicover Express - przeziębienie, grypa
--c, --clinic|wszystkie jakie są w regionie/mieście
--o, --doctor|wszyscy lekarze, można użyć wielokrotnie w celu sprawdzenie kilku lekarzy
+-c, --clinic|wszystkie jakie są w regionie/mieście, można użyć parametru wielokrotnie w celu szukania wizyt w konkretnych klinikach
+-o, --doctor|wszyscy lekarze, można użyć parametru wielokrotnie w celu sprawdzenie kilku lekarzy
 -d, --start-date|data bieżąca
 -i, --interval|brak
 --pushover_token|brak, Pushover Application Token

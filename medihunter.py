@@ -18,8 +18,8 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.password_option(confirmation_prompt=False)
 @click.option('--region', '-r', default=204)
 @click.option('--specialization', '-s', default=16234)
-@click.option('--clinic', '-c', default=-1)
-@click.option('--doctor', '-o', multiple=True, default=-1)
+@click.option('--clinic', '-c', multiple=True, default="-1")
+@click.option('--doctor', '-o', multiple=True, default="-1")
 @click.option('--start-date', '-d', default=now_formatted)
 @click.option('--interval', '-i', default=0)
 @click.option('--pushover_token', default="")
@@ -53,31 +53,32 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
     while interval > 0 or counter < 1:
         notification = ""
         notificationcounter = 0
-        for d in doctor:
-            appointments = med_session.search_appointments(
-                region=region, specialization=specialization, clinic=clinic, doctor=d, start_date=start_date)
+        for c in clinic:
+            for d in doctor:
+                appointments = med_session.search_appointments(
+                    region=region, specialization=specialization, clinic=c, doctor=d, start_date=start_date)
 
-            if not appointments:
-                click.echo(click.style(
-                    f'(iteration: {counter}) No results found', fg='yellow'))
-            else:
-                applen = len(appointments)
-                visistshelve = shelve.open('./visits.db')
-                click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments', fg='green', blink=True))
-                for appointment in appointments:
-                    appointmentcheck = user + appointment.appointment_datetime + appointment.doctor_name
-                    click.echo(
-                        appointment.appointment_datetime + ' ' +
-                        click.style(appointment.doctor_name, fg='bright_green') + ' ' +
-                        appointment.clinic_name
-                    )
-                    if pushover_notification :
-                        alreadynotified = appointmentcheck in list(visistshelve.values())
-                        if not alreadynotified:
-                            notificationcounter += 1
-                            visistshelve[appointmentcheck] = appointmentcheck 
-                            notification = notification + '<b>' + appointment.appointment_datetime + '</b> <font color="#0000ff">' + appointment.doctor_name + '</font> ' + appointment.clinic_name + '\n'
-                visistshelve.close()
+                if not appointments:
+                    click.echo(click.style(
+                        f'(iteration: {counter}) No results found', fg='yellow'))
+                else:
+                    applen = len(appointments)
+                    visistshelve = shelve.open('./visits.db')
+                    click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments', fg='green', blink=True))
+                    for appointment in appointments:
+                        appointmentcheck = user + appointment.appointment_datetime + appointment.doctor_name
+                        click.echo(
+                            appointment.appointment_datetime + ' ' +
+                            click.style(appointment.doctor_name, fg='bright_green') + ' ' +
+                            appointment.clinic_name
+                        )
+                        if pushover_notification :
+                            alreadynotified = appointmentcheck in list(visistshelve.values())
+                            if not alreadynotified:
+                                notificationcounter += 1
+                                visistshelve[appointmentcheck] = appointmentcheck 
+                                notification = notification + '<b>' + appointment.appointment_datetime + '</b> <font color="#0000ff">' + appointment.doctor_name + '</font> ' + appointment.clinic_name + '\n'
+                    visistshelve.close()
         
         if pushover_notification and notificationcounter > 0 :
             if len(notification) > 1020 : notification = notification [0:960] + '<b><font color="#ff0000"> + more appointments online</font></b>'
