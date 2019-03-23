@@ -18,8 +18,8 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.password_option(confirmation_prompt=False)
 @click.option('--region', '-r', default=204)
 @click.option('--specialization', '-s', default=16234)
-@click.option('--clinic', '-c', multiple=True, default="-1")
-@click.option('--doctor', '-o', multiple=True, default="-1")
+@click.option('--clinic', '-c', multiple=True, default='0')
+@click.option('--doctor', '-o', multiple=True, default='0')
 @click.option('--start-date', '-d', default=now_formatted)
 @click.option('--interval', '-i', default=0)
 @click.option('--pushover_token', default="")
@@ -29,6 +29,15 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 def find_appointment(user, password, region, specialization, clinic, doctor, start_date, interval, pushover_token, pushover_user,pushover_device,pushover_msgtitle):
     counter = 0
     med_session = MedicoverSession(username=user, password=password)
+
+    # TODO: Workaround as for some reasons when they were defaulted to -1 in click.option this was casuing tuple error in click and for loops
+    if clinic[0]=='0': 
+        clinic = list(clinic)
+        clinic[0]='-1'
+    if doctor[0]=='0': 
+        doctor = list(doctor)
+        doctor[0]='-1'
+    # END of TO DO
 
     if (pushover_user != "") and (pushover_token != ""):
         try :
@@ -89,8 +98,13 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         time.sleep(interval*60)
 
 
-FIELD_NAMES = ['specialization', 'region', 'clinic', 'doctor']
+def is_empty(any_structure):
+    if any_structure:
+        return False
+    else:
+        return True
 
+FIELD_NAMES = ['specialization', 'region', 'clinic', 'doctor']
 
 @click.command()
 @click.option('-f', '--field-name', type=click.Choice(FIELD_NAMES), default='specialization')
