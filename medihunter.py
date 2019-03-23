@@ -1,5 +1,6 @@
 import json
 import time
+import shelve
 from datetime import datetime
 from pushover import Client
 
@@ -58,15 +59,26 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         else:
             applen = len(appointments)
             notification = ""
+            notificationcounter = 0
+            visistshelve = shelve.open('./visits.db')
             click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments', fg='green', blink=True))
             for appointment in appointments:
+                appointmentcheck = user + appointment.appointment_datetime + appointment.doctor_name
                 click.echo(
                     appointment.appointment_datetime + ' ' +
                     click.style(appointment.doctor_name, fg='bright_green') + ' ' +
                     appointment.clinic_name
                 )
-                if pushover_notification : notification = notification + appointment.appointment_datetime + ' ' + appointment.doctor_name + ' ' + appointment.clinic_name + '\n'
-            if pushover_notification : client.send_message(notification, title="Found " + str(applen) + " appointments", device=pushover_device)
+                if pushover_notification :
+                    alreadynotified = appointmentcheck in list(visistshelve.values())
+                    if not alreadynotified:
+                        notificationcounter += 1
+                        visistshelve[appointmentcheck] = appointmentcheck 
+                        notification = notification + '<b>' + appointment.appointment_datetime + '</b> <font color="#0000ff">' + appointment.doctor_name + '</font> ' + appointment.clinic_name + '\n'
+            if pushover_notification and notificationcounter > 0 :
+                if len(notification) > 1020 : notification = notification [0:960] + '<b><font color="#ff0000"> + more appointments online</font></b>'
+                client.send_message(notification, title="Found " + str(notificationcounter) + " appointments", device=pushover_device,html=1)
+            visistshelve.close()
         counter += 1
         time.sleep(interval*60)
 
