@@ -39,6 +39,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         doctor[0]='-1'
     # END of TO DO
 
+    #Checking if pushover is enabled and notifcations should be send later
     if (pushover_user != "") and (pushover_token != ""):
         try :
             client = Client(user_key=pushover_user, api_token=pushover_token)
@@ -80,6 +81,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                             click.style(appointment.doctor_name, fg='bright_green') + ' ' +
                             appointment.clinic_name
                         )
+                        #Pusover notifications message generation - will be generated only for newly found appointements
                         if pushover_notification :
                             try :
                                 # TODO: replace shelves with SQL as concurency will fail
@@ -101,6 +103,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                                     click.secho('Problem in Writing appointments to storage', fg='red')
                                     return
 
+        #Pushover notification final trim (max 1024 chars) and delivery
         if pushover_notification and notificationcounter > 0 :
             if len(notification) > 1020 : notification = notification [0:960] + '<b><font color="#ff0000"> + more appointments online</font></b>'
             if len(pushover_msgtitle) > 0 : pushover_msgtitle = pushover_msgtitle + ': '
@@ -110,6 +113,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         # TODO: Time to sleep should not be over 10 minutes as this is maximum time for Medicover session
         time.sleep(interval*60)
 
+    # Leveraging exitsing fucntion as if it's running i.e. via Cron ther may be too manyu sessions left open
     try :
         r = med_session.log_out()
     except Exception:
