@@ -223,7 +223,7 @@ class MedicoverSession():
         next_url = 'https://mol.medicover.pl/Users/Account/LogOff'
         self.headers.update({'Referer': 'https://mol.medicover.pl/'})
         self.headers.update(self.session.headers)
-        print(self.headers)
+        #print(self.headers)
         response = self.session.get(next_url, headers=self.headers)
         self.session.close()
         return response

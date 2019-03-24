@@ -107,7 +107,14 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
             client.send_message(notification, title=pushover_msgtitle + "Found " + str(notificationcounter) + " appointments", device=pushover_device,html=1)
 
         counter += 1
+        # TODO: Time to sleep should not be over 10 minutes as this is maximum time for Medicover session
         time.sleep(interval*60)
+
+    try :
+        r = med_session.log_out()
+    except Exception:
+        click.secho('Logout problems', fg='red')
+        return
 
 
 def is_empty(any_structure):
