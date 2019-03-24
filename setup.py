@@ -9,6 +9,7 @@ setup(
         'click',
         'requests',
         'beautifulsoup4',
+        'python-pushover',
     ],
     entry_points='''
         [console_scripts]

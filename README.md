@@ -28,7 +28,7 @@ Od teraz mamy dostępną w virtualenvie komendę **medihunter**
 
 ### show-params
 
-Gdy wyszukujemy wizyty musimy podać miasto, placówkę medyczną, specjalizację (jaki to ma być lekarz), datę wizyty (wizyta zacznie się nie wcześniej niż ta data). Każdy z tych parametrów (z wyjątkiem daty) ma przypisany nr id. Żeby go poznać używamy do tego komendy *show-params*.
+Gdy wyszukujemy wizyty musimy podać miasto, placówkę medyczną, specjalizację (jaki to ma być lekarz), identyfikator lekarza (możliwość wybrania konkretnego lekarza), datę wizyty (wizyta zacznie się nie wcześniej niż ta data). Każdy z tych parametrów (z wyjątkiem daty) ma przypisany nr id. Żeby go poznać używamy do tego komendy *show-params*.
 
 id specjalizacji
 
@@ -56,6 +56,18 @@ Oczywiście znalezienie wizyty do endokrynologa nie jest takie proste, więc ust
 medihunter find-appointment -s 27962 -i 1
 ```
 
+a może chcemy poszukać konkretnych endokrynolgów o ID: 12345 i 0987 ?
+
+```bash
+medihunter find-appointment -s 27962 -o 12345 -o 0987
+```
+
+a może po prostu szukamy dowolnego internisty w przychodniach blisko nas w Atrium i na Prostej ?
+
+```bash
+medihunter find-appointment -s 9 -c 174 -c 49088
+```
+
 ## Wyświetlanie pomocy
 
 Ogólna pomoc
@@ -71,6 +83,11 @@ medihunter find-appointment --help
 medihunter show-params --help
 ```
 
+## Powiadomienia Pushover
+
+Poprzez podanie parametrów do powiadomień Poshover https://pushover.net/ możliwe jest przekazywanie powiadomień na wizytę bezpośrednio do aplikacji. Należy podać minimalnie parametry --pushover_token oraz --pushover_user
+
+
 ## Domyślne ustawienia
 
 ### show-params
@@ -83,6 +100,11 @@ opcja|domyślna wartość
 -----|----------------
 -r, --region|Warszawa 
 -s, --specialization|Medicover Express - przeziębienie, grypa
--c, --clinic|wszystkie jakie są w regionie/mieście
+-c, --clinic|wszystkie jakie są w regionie/mieście, można użyć parametru wielokrotnie w celu szukania wizyt w konkretnych klinikach
+-o, --doctor|wszyscy lekarze, można użyć parametru wielokrotnie w celu sprawdzenie kilku lekarzy
 -d, --start-date|data bieżąca
 -i, --interval|brak
+--pushover_token|brak, Pushover Application Token
+--pushover_user|brak, Pushover user Token
+--pushover_device|brak, None nazwa device domyślnie wszystkie
+--pushover_msgtitle|brak - prefix dodawany przed tytułem powiadomienia

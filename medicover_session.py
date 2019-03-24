@@ -168,7 +168,8 @@ class MedicoverSession():
         if not ('clinic' in kwargs
                 and 'region' in kwargs
                 and 'start_date' in kwargs
-                and 'specialization' in kwargs):
+                and 'specialization' in kwargs
+                and 'doctor' in kwargs):
             return
         
 
@@ -193,7 +194,8 @@ class MedicoverSession():
             'regionId': kwargs['region'],
             'searchForNextSince': 'null',
             'searchSince': kwargs['start_date'],
-            'specializationId': kwargs['specialization']
+            'specializationId': kwargs['specialization'],
+            'doctorId': kwargs['doctor']
         }
 
         result = self.session.post(
