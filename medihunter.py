@@ -71,8 +71,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                     click.echo(click.style(
                         f'(iteration: {counter}) No results found', fg='yellow'))
                 else:
-                    applen = len(appointments)
-                    visistshelve = shelve.open('./visits.db')
+                    applen = len(appointments)                    
                     click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments', fg='green', blink=True))
                     for appointment in appointments:
                         appointmentcheck = user + appointment.appointment_datetime + appointment.doctor_name
@@ -82,13 +81,25 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                             appointment.clinic_name
                         )
                         if pushover_notification :
-                            alreadynotified = appointmentcheck in list(visistshelve.values())
+                            try :
+                                visistshelve = shelve.open('./visits.db', flag='r')
+                                alreadynotified = appointmentcheck in list(visistshelve.values())
+                                visistshelve.close()
+                            except Exception:
+                                click.secho('Problem in Reading stored appointments', fg='red')
+                                return
+
                             if not alreadynotified:
                                 notificationcounter += 1
-                                visistshelve[appointmentcheck] = appointmentcheck 
                                 notification = notification + '<b>' + appointment.appointment_datetime + '</b> <font color="#0000ff">' + appointment.doctor_name + '</font> ' + appointment.clinic_name + '\n'
-                    visistshelve.close()
-        
+                                try:
+                                    visistshelve = shelve.open('./visits.db')
+                                    visistshelve[appointmentcheck] = appointmentcheck
+                                    visistshelve.close()
+                                except Exception:
+                                    click.secho('Problem in Writing appointments to storage', fg='red')
+                                    return
+                                    
         if pushover_notification and notificationcounter > 0 :
             if len(notification) > 1020 : notification = notification [0:960] + '<b><font color="#ff0000"> + more appointments online</font></b>'
             if len(pushover_msgtitle) > 0 : pushover_msgtitle = pushover_msgtitle + ': '
