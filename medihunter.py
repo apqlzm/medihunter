@@ -55,7 +55,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         click.secho('Unsuccessful logging in', fg='red')
         return
 
-    click.echo(datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + ': Logged in')
+    click.echo(datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + ': Logged in ' + pushover_msgtitle)
 
     med_session.load_search_form()  # TODO: can I get rid of it?
 
@@ -69,10 +69,10 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
 
                 if not appointments:
                     click.echo(click.style(
-                        f'(iteration: {counter}) No results found', fg='yellow'))
+                        f'(iteration: {counter}) No results found ' + pushover_msgtitle, fg='yellow'))
                 else:
                     applen = len(appointments)                    
-                    click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments', fg='green', blink=True))
+                    click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments ' + pushover_msgtitle, fg='green', blink=True))
                     for appointment in appointments:
                         appointmentcheck = user + appointment.appointment_datetime + appointment.doctor_name
                         click.echo(
@@ -82,6 +82,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                         )
                         if pushover_notification :
                             try :
+                                # TODO: replace shelves with SQL as concurency will fail
                                 visistshelve = shelve.open('./visits.db', flag='r')
                                 alreadynotified = appointmentcheck in list(visistshelve.values())
                                 visistshelve.close()
@@ -99,7 +100,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                                 except Exception:
                                     click.secho('Problem in Writing appointments to storage', fg='red')
                                     return
-                                    
+
         if pushover_notification and notificationcounter > 0 :
             if len(notification) > 1020 : notification = notification [0:960] + '<b><font color="#ff0000"> + more appointments online</font></b>'
             if len(pushover_msgtitle) > 0 : pushover_msgtitle = pushover_msgtitle + ': '
