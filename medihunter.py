@@ -113,7 +113,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         # TODO: Time to sleep should not be over 10 minutes as this is maximum time for Medicover session
         time.sleep(interval*60)
 
-    # Leveraging exitsing fucntion as if it's running i.e. via Cron ther may be too manyu sessions left open
+    # Leveraging existing function as if it's running i.e. via Cron ther may be too many sessions left open
     try :
         r = med_session.log_out()
     except Exception:
