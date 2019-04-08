@@ -110,7 +110,9 @@ domyślnie -f jest ustawiony na *specialization*
 opcja|domyślna wartość
 -----|----------------
 -r, --region|Warszawa 
--s, --specialization|Medicover Express - przeziębienie, grypa
+-b, --bookingtype|2, Typ wizyty 2 = Konsultacja (domyślnie), 1 = Badanie diagnostyczne
+-s, --specialization|brak Specjalizacja, podać w przypadku gdy Typ wizyty to Konsultacja (bookingtype = 2 domyślnie)
+-e, --service|brak, Typ/identyfikator usługi, podać w przypadku gdy Typ wizyty to usługa (bookingtype = 1), działa analogicznie do specjalizacji 
 -c, --clinic|wszystkie jakie są w regionie/mieście, można użyć parametru wielokrotnie w celu szukania wizyt w konkretnych klinikach
 -o, --doctor|wszyscy lekarze, można użyć parametru wielokrotnie w celu sprawdzenie kilku lekarzy
 -d, --start-date|data bieżąca (format: YYYY-mm-dd)

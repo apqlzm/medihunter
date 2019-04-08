@@ -168,7 +168,9 @@ class MedicoverSession():
         if not ('clinic' in kwargs
                 and 'region' in kwargs
                 and 'start_date' in kwargs
+                and 'bookingtype' in kwargs
                 and 'specialization' in kwargs
+                and 'service' in kwargs
                 and 'doctor' in kwargs):
             return
         
@@ -186,7 +188,7 @@ class MedicoverSession():
             })
     
         search_params = {
-            'bookingTypeId': '2',
+            'bookingTypeId': kwargs['bookingtype'],
             'clinicId': kwargs['clinic'],
             'isSetBecauseOfPcc': 'false',
             'isSetBecausePromoteSpecialization': 'false',
@@ -195,6 +197,7 @@ class MedicoverSession():
             'searchForNextSince': 'null',
             'searchSince': kwargs['start_date'],
             'specializationId': kwargs['specialization'],
+            'service': kwargs['service'],
             'doctorId': kwargs['doctor']
         }
 

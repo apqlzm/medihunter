@@ -17,7 +17,9 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.option('--user', prompt=True)
 @click.password_option(confirmation_prompt=False)
 @click.option('--region', '-r', default=204)
-@click.option('--specialization', '-s', default=16234)
+@click.option('--bookingtype','-b',default=2)
+@click.option('--specialization', '-s', default="")
+@click.option('--service','-e',default="")
 @click.option('--clinic', '-c', multiple=True, default='0')
 @click.option('--doctor', '-o', multiple=True, default='0')
 @click.option('--start-date', '-d', default=now_formatted)
@@ -26,7 +28,7 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.option('--pushover_user', default="")
 @click.option('--pushover_device', default=None)
 @click.option('--pushover_msgtitle', default="")
-def find_appointment(user, password, region, specialization, clinic, doctor, start_date, interval, pushover_token, pushover_user,pushover_device,pushover_msgtitle):
+def find_appointment(user, password, region, bookingtype, specialization, service, clinic, doctor, start_date, interval, pushover_token, pushover_user,pushover_device,pushover_msgtitle):
     counter = 0
     med_session = MedicoverSession(username=user, password=password)
 
@@ -66,7 +68,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         for c in clinic:
             for d in doctor:
                 appointments = med_session.search_appointments(
-                    region=region, specialization=specialization, clinic=c, doctor=d, start_date=start_date)
+                    region=region, bookingtype=bookingtype, specialization=specialization, service=service, clinic=c, doctor=d, start_date=start_date)
 
                 if not appointments:
                     click.echo(click.style(
@@ -85,7 +87,8 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                         if pushover_notification :
                             try :
                                 # TODO: replace shelves with SQL as concurency will fail
-                                visistshelve = shelve.open('./visits.db', flag='r')
+                                # TODO: crude workaround to create shelve if not existing 
+                                visistshelve = shelve.open('./visits.db')
                                 alreadynotified = appointmentcheck in list(visistshelve.values())
                                 visistshelve.close()
                             except Exception:
