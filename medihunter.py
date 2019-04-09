@@ -17,7 +17,9 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.option('--user', prompt=True)
 @click.password_option(confirmation_prompt=False)
 @click.option('--region', '-r', default=204)
-@click.option('--specialization', '-s', default=16234)
+@click.option('--bookingtype','-b',default=2)
+@click.option('--specialization', '-s', default="")
+@click.option('--service','-e',default="")
 @click.option('--clinic', '-c', multiple=True, default='0')
 @click.option('--doctor', '-o', multiple=True, default='0')
 @click.option('--start-date', '-d', default=now_formatted)
@@ -26,7 +28,7 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.option('--pushover_user', default="")
 @click.option('--pushover_device', default=None)
 @click.option('--pushover_msgtitle', default="")
-def find_appointment(user, password, region, specialization, clinic, doctor, start_date, interval, pushover_token, pushover_user,pushover_device,pushover_msgtitle):
+def find_appointment(user, password, region, bookingtype, specialization, service, clinic, doctor, start_date, interval, pushover_token, pushover_user,pushover_device,pushover_msgtitle):
     counter = 0
     med_session = MedicoverSession(username=user, password=password)
 
@@ -39,6 +41,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         doctor[0]='-1'
     # END of TO DO
 
+    #Checking if pushover is enabled and notifcations should be send later
     if (pushover_user != "") and (pushover_token != ""):
         try :
             client = Client(user_key=pushover_user, api_token=pushover_token)
@@ -55,7 +58,7 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         click.secho('Unsuccessful logging in', fg='red')
         return
 
-    click.echo(datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + ': Logged in')
+    click.echo(datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + ': Logged in ' + pushover_msgtitle)
 
     med_session.load_search_form()  # TODO: can I get rid of it?
 
@@ -65,15 +68,14 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
         for c in clinic:
             for d in doctor:
                 appointments = med_session.search_appointments(
-                    region=region, specialization=specialization, clinic=c, doctor=d, start_date=start_date)
+                    region=region, bookingtype=bookingtype, specialization=specialization, service=service, clinic=c, doctor=d, start_date=start_date)
 
                 if not appointments:
                     click.echo(click.style(
-                        f'(iteration: {counter}) No results found', fg='yellow'))
+                        f'(iteration: {counter}) No results found ' + pushover_msgtitle, fg='yellow'))
                 else:
-                    applen = len(appointments)
-                    visistshelve = shelve.open('./visits.db')
-                    click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments', fg='green', blink=True))
+                    applen = len(appointments)                    
+                    click.echo(click.style(f'(iteration: {counter}) Found {applen} appointments ' + pushover_msgtitle, fg='green', blink=True))
                     for appointment in appointments:
                         appointmentcheck = user + appointment.appointment_datetime + appointment.doctor_name
                         click.echo(
@@ -81,21 +83,45 @@ def find_appointment(user, password, region, specialization, clinic, doctor, sta
                             click.style(appointment.doctor_name, fg='bright_green') + ' ' +
                             appointment.clinic_name
                         )
+                        #Pusover notifications message generation - will be generated only for newly found appointements
                         if pushover_notification :
-                            alreadynotified = appointmentcheck in list(visistshelve.values())
+                            try :
+                                # TODO: replace shelves with SQL as concurency will fail
+                                # TODO: crude workaround to create shelve if not existing 
+                                visistshelve = shelve.open('./visits.db')
+                                alreadynotified = appointmentcheck in list(visistshelve.values())
+                                visistshelve.close()
+                            except Exception:
+                                click.secho('Problem in Reading stored appointments', fg='red')
+                                return
+
                             if not alreadynotified:
                                 notificationcounter += 1
-                                visistshelve[appointmentcheck] = appointmentcheck 
                                 notification = notification + '<b>' + appointment.appointment_datetime + '</b> <font color="#0000ff">' + appointment.doctor_name + '</font> ' + appointment.clinic_name + '\n'
-                    visistshelve.close()
-        
+                                try:
+                                    visistshelve = shelve.open('./visits.db')
+                                    visistshelve[appointmentcheck] = appointmentcheck
+                                    visistshelve.close()
+                                except Exception:
+                                    click.secho('Problem in Writing appointments to storage', fg='red')
+                                    return
+
+        #Pushover notification final trim (max 1024 chars) and delivery
         if pushover_notification and notificationcounter > 0 :
             if len(notification) > 1020 : notification = notification [0:960] + '<b><font color="#ff0000"> + more appointments online</font></b>'
             if len(pushover_msgtitle) > 0 : pushover_msgtitle = pushover_msgtitle + ': '
             client.send_message(notification, title=pushover_msgtitle + "Found " + str(notificationcounter) + " appointments", device=pushover_device,html=1)
 
         counter += 1
+        # TODO: Time to sleep should not be over 10 minutes as this is maximum time for Medicover session
         time.sleep(interval*60)
+
+    # Leveraging existing function as if it's running i.e. via Cron ther may be too many sessions left open
+    try :
+        r = med_session.log_out()
+    except Exception:
+        click.secho('Logout problems', fg='red')
+        return
 
 
 def is_empty(any_structure):

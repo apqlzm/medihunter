@@ -68,6 +68,17 @@ a może po prostu szukamy dowolnego internisty w przychodniach blisko nas w Atri
 medihunter find-appointment -s 9 -c 174 -c 49088
 ```
 
+Lub można dodać bezpośrednio do Crontaba jak poniżej
+- będzie uruchamiany między 6tą a 23cią co 5 minut
+- -s - szuka Ortopedy dla dorosłych
+- -c 174 -c 6896 tylko w centrum Warszawa Atrium i Warszawa Inflancka
+Będzie korzystał z podanych parametrów użytkownika Medicoveru i Pushover do wysyłania powiadomień
+- crontab zapisze logi w /var/log/medihunter.log
+
+```bash
+*/5 6-23 * * * /usr/bin/python3.7 /home/user/medihunter.py find-appointment -s 163 -c 174 -c 6896 --user MEDICOVER_USER --password MEDICOVER_PASS --pushover_msgtitle 'Ortopeda Centrum' --pushover_token PUSHOVER_TOKEN --pushover_user PUSHOVER_USER >> /var/log/medihunter.log 2>&1
+```
+
 ## Wyświetlanie pomocy
 
 Ogólna pomoc
@@ -99,12 +110,14 @@ domyślnie -f jest ustawiony na *specialization*
 opcja|domyślna wartość
 -----|----------------
 -r, --region|Warszawa 
--s, --specialization|Medicover Express - przeziębienie, grypa
+-b, --bookingtype|2, Typ wizyty 2 = Konsultacja (domyślnie), 1 = Badanie diagnostyczne
+-s, --specialization|brak Specjalizacja, podać w przypadku gdy Typ wizyty to Konsultacja (bookingtype = 2 domyślnie)
+-e, --service|brak, Typ/identyfikator usługi, podać w przypadku gdy Typ wizyty to usługa (bookingtype = 1), działa analogicznie do specjalizacji 
 -c, --clinic|wszystkie jakie są w regionie/mieście, można użyć parametru wielokrotnie w celu szukania wizyt w konkretnych klinikach
 -o, --doctor|wszyscy lekarze, można użyć parametru wielokrotnie w celu sprawdzenie kilku lekarzy
--d, --start-date|data bieżąca
+-d, --start-date|data bieżąca (format: YYYY-mm-dd)
 -i, --interval|brak
 --pushover_token|brak, Pushover Application Token
 --pushover_user|brak, Pushover user Token
---pushover_device|brak, None nazwa device domyślnie wszystkie
+--pushover_device|brak, None nazwa device w Pushover domyślnie pusta=wszystkie
 --pushover_msgtitle|brak - prefix dodawany przed tytułem powiadomienia
