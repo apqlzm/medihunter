@@ -197,7 +197,7 @@ class MedicoverSession():
             'searchForNextSince': 'null',
             'searchSince': kwargs['start_date'],
             'specializationId': kwargs['specialization'],
-            'service': kwargs['service'],
+            'serviceId': kwargs['service'],
             'doctorId': kwargs['doctor']
         }
 
