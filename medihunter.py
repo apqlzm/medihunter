@@ -18,30 +18,37 @@ now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
 @click.password_option(confirmation_prompt=False)
 @click.option('--region', '-r', default=204)
 @click.option('--bookingtype','-b',default=2)
-@click.option('--specialization', '-s', default="")
+@click.option('--specialization', '-s', required=True)
 @click.option('--service','-e',default="")
-@click.option('--clinic', '-c', multiple=True, default='0')
-@click.option('--doctor', '-o', multiple=True, default='0')
+@click.option('--clinic', '-c', multiple=True, default=['-1'])
+@click.option('--doctor', '-o', multiple=True, default=['-1'])
 @click.option('--start-date', '-d', default=now_formatted)
 @click.option('--interval', '-i', default=0)
 @click.option('--pushover_token', default="")
 @click.option('--pushover_user', default="")
 @click.option('--pushover_device', default=None)
 @click.option('--pushover_msgtitle', default="")
-def find_appointment(user, password, region, bookingtype, specialization, service, clinic, doctor, start_date, interval, pushover_token, pushover_user,pushover_device,pushover_msgtitle):
+def find_appointment(
+    user,
+    password,
+    region,
+    bookingtype,
+    specialization,
+    service,
+    clinic,
+    doctor,
+    start_date,
+    interval,
+    pushover_token,
+    pushover_user,
+    pushover_device,
+    pushover_msgtitle
+):
+
     counter = 0
     med_session = MedicoverSession(username=user, password=password)
 
-    # TODO: Workaround as for some reasons when they were defaulted to -1 in click.option this was casuing tuple error in click and for loops
-    if clinic[0]=='0': 
-        clinic = list(clinic)
-        clinic[0]='-1'
-    if doctor[0]=='0': 
-        doctor = list(doctor)
-        doctor[0]='-1'
-    # END of TO DO
-
-    #Checking if pushover is enabled and notifcations should be send later
+    # Checking if pushover is enabled and notifications should be send later
     if (pushover_user != "") and (pushover_token != ""):
         try :
             client = Client(user_key=pushover_user, api_token=pushover_token)
