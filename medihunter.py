@@ -11,23 +11,23 @@ from medicover_session import MedicoverSession, load_available_search_params
 
 now = datetime.now()
 now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
-
+now_formatted_logging = now.strftime('%Y-%m-%d %H:%M:%S')
 
 @click.command()
 @click.option('--user', prompt=True)
 @click.password_option(confirmation_prompt=False)
-@click.option('--region', '-r', default=204)
-@click.option('--bookingtype','-b',default=2)
+@click.option('--region', '-r', default=204, show_default=True)
+@click.option('--bookingtype', '-b', default=2, show_default=True)
 @click.option('--specialization', '-s', required=True)
-@click.option('--service','-e',default="")
+@click.option('--service', '-e', default="")
 @click.option('--clinic', '-c', multiple=True, default=['-1'])
 @click.option('--doctor', '-o', multiple=True, default=['-1'])
-@click.option('--start-date', '-d', default=now_formatted)
+@click.option('--start-date', '-d', default=now_formatted, show_default=True)
 @click.option('--interval', '-i', default=0)
-@click.option('--pushover_token', default="")
-@click.option('--pushover_user', default="")
-@click.option('--pushover_device', default=None)
-@click.option('--pushover_msgtitle', default="")
+@click.option('--pushover_token')
+@click.option('--pushover_user')
+@click.option('--pushover_device')
+@click.option('--pushover_msgtitle')
 def find_appointment(
     user,
     password,
@@ -49,7 +49,7 @@ def find_appointment(
     med_session = MedicoverSession(username=user, password=password)
 
     # Checking if pushover is enabled and notifications should be send later
-    if (pushover_user != "") and (pushover_token != ""):
+    if pushover_user and pushover_token:
         try :
             client = Client(user_key=pushover_user, api_token=pushover_token)
             pushover_notification = True
@@ -60,12 +60,12 @@ def find_appointment(
         pushover_notification = False
 
     try :
-        r = med_session.log_in()
+        med_session.log_in()
     except Exception:
         click.secho('Unsuccessful logging in', fg='red')
         return
 
-    click.echo(datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + ': Logged in ' + pushover_msgtitle)
+    click.echo(f'{now_formatted_logging}: Logged in {pushover_msgtitle}')
 
     med_session.load_search_form()  # TODO: can I get rid of it?
 

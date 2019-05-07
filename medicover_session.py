@@ -81,7 +81,7 @@ class MedicoverSession():
 
     def log_in(self):
         """
-            Login to Modicover website
+            Login to Medicover website
         """
         #TODO: this method needs to be cleaned
 
@@ -163,7 +163,6 @@ class MedicoverSession():
         return appointments        
 
     def search_appointments(self, *args, **kwargs):
-        # TODO validate arguments
 
         if not ('clinic' in kwargs
                 and 'region' in kwargs
