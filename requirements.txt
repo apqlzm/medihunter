@@ -1,4 +1,4 @@
-Click
-requests
-beautifulsoup4
+Click==7.0
+requests==2.20.0
+beautifulsoup4==4.6.3
 python-pushover

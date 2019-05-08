@@ -5,13 +5,51 @@ this is a startpoint for adding new features
 import json
 import time
 from datetime import datetime
+from typing import Callable, List
 
 import click
 
-from medicover_session import MedicoverSession, load_available_search_params
+from medicover_session import (Appointment, MedicoverSession,
+                               load_available_search_params)
 
 now = datetime.now()
 now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
+
+
+def make_duplicate_checker() -> Callable[[Appointment], bool]:
+    """Closure which checks if appointment was already found before 
+
+    Returns:
+        True if appointment ocurred first time
+        False otherwise
+    """
+    found_appointments: List[Appointment] = []
+
+    def duplicate_checker(appointment: Appointment) -> bool:
+        print(found_appointments)
+        if appointment in found_appointments:
+            return False
+        found_appointments.append(appointment)
+        return True
+
+    return duplicate_checker
+
+
+duplicate_checker = make_duplicate_checker()
+
+
+def process_appointments(appointments: List[Appointment], iteration_counter: int):
+
+    applen = len(appointments)
+    click.echo(click.style(
+        f'(iteration: {iteration_counter}) Found {applen} appointments', fg='green', blink=True))
+    for appointment in appointments:
+        if duplicate_checker(appointment):
+            click.echo(
+                appointment.appointment_datetime + ' ' +
+                click.style(appointment.doctor_name, fg='bright_green') + ' ' +
+                appointment.clinic_name
+            )
 
 
 @click.command()
@@ -33,11 +71,11 @@ def find_appointment(user,
                      doctor,
                      start_date,
                      interval):
-    counter = 0
+    iteration_counter = 1
     med_session = MedicoverSession(username=user, password=password)
 
     try:
-        r = med_session.log_in()
+        med_session.log_in()
     except Exception:
         click.secho('Unsuccessful logging in', fg='red')
         return
@@ -46,7 +84,7 @@ def find_appointment(user,
 
     med_session.load_search_form()  # TODO: can I get rid of it?
 
-    while interval > 0 or counter < 1:
+    while interval > 0 or iteration_counter < 2:
         appointments = med_session.search_appointments(
             region=region, 
             bookingtype=bookingtype,
@@ -57,18 +95,11 @@ def find_appointment(user,
 
         if not appointments:
             click.echo(click.style(
-                f'(iteration: {counter}) No results found', fg='yellow'))
+                f'(iteration: {iteration_counter}) No results found', fg='yellow'))
         else:
-            applen = len(appointments)
-            click.echo(click.style(
-                f'(iteration: {counter}) Found {applen} appointments', fg='green', blink=True))
-            for appointment in appointments:
-                click.echo(
-                    appointment.appointment_datetime + ' ' +
-                    click.style(appointment.doctor_name, fg='bright_green') + ' ' +
-                    appointment.clinic_name
-                )
-        counter += 1
+            process_appointments(appointments, iteration_counter)
+
+        iteration_counter += 1
         time.sleep(interval*60)
 
 

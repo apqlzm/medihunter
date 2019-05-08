@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 from errors import IdsrvXsrfNotFound
 
+Appointment = namedtuple('Appointment', ['doctor_name', 'clinic_name', 'appointment_datetime'])
 
 class MedicoverSession():
     """
@@ -145,8 +146,6 @@ class MedicoverSession():
         """
         take search results in json format end transporm it to list of namedtuples
         """
-        Appointment = namedtuple(
-            'Appointment', ['doctor_name', 'clinic_name', 'appointment_datetime'])
     
         result = result.json()
         result = result['items']
