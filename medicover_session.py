@@ -169,7 +169,6 @@ class MedicoverSession():
                 and 'start_date' in kwargs
                 and 'bookingtype' in kwargs
                 and 'specialization' in kwargs
-                and 'service' in kwargs
                 and 'doctor' in kwargs):
             return
         
@@ -186,18 +185,24 @@ class MedicoverSession():
             'Referer': 'https://mol.medicover.pl/MyVisits'
             })
     
+
         search_params = {
-            'bookingTypeId': kwargs['bookingtype'],
-            'clinicId': kwargs['clinic'],
-            'isSetBecauseOfPcc': 'false',
-            'isSetBecausePromoteSpecialization': 'false',
-            'periodOfTheDay': '0',
             'regionId': kwargs['region'],
-            'searchForNextSince': 'null',
-            'searchSince': kwargs['start_date'],
+            'bookingTypeId': kwargs['bookingtype'],
             'specializationId': kwargs['specialization'],
-            'serviceId': kwargs['service'],
-            'doctorId': kwargs['doctor']
+            'clinicId': kwargs['clinic'],
+            'languageId': -1,
+            'doctorId': kwargs['doctor'],
+            'searchSince': kwargs['start_date'],
+            'searchForNextSince': None,
+            'periodOfTheDay': None,
+            'isSetBecauseOfPcc': False,
+            'isSetBecausePromoteSpecialization': False,
+            'regionIds': [kwargs['region']],
+            'specialtyIds': [kwargs['specialization']],
+            'clinicIds': [kwargs['clinic']],
+            'serviceIds': [],
+            'doctorLanguagesIds': []
         }
 
         result = self.session.post(
