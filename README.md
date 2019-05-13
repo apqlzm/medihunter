@@ -56,19 +56,20 @@ Oczywiście znalezienie wizyty do endokrynologa nie jest takie proste, więc ust
 medihunter find-appointment -s 27962 -i 1
 ```
 
-a może chcemy poszukać konkretnych endokrynolgów o ID: 12345 i 0987 ?
+a może chcemy poszukać konkretnych endokrynolgów o ID: 12345 i 0987? TODO: _na razie wpisywanie więcej niż jednego specjalistę dostępne tylko w medicover_pushover.py_
 
 ```bash
 medihunter find-appointment -s 27962 -o 12345 -o 0987
 ```
 
-a może po prostu szukamy dowolnego internisty w przychodniach blisko nas w Atrium i na Prostej ?
+a może po prostu szukamy dowolnego internisty w przychodniach blisko nas w Atrium i na Prostej? TODO _na razie wpisywanie więcej niż jednej placówki dostępne tylko w medicover_pushover.py_
 
 ```bash
 medihunter find-appointment -s 9 -c 174 -c 49088
 ```
 
 Lub można dodać bezpośrednio do Crontaba jak poniżej
+
 - będzie uruchamiany między 6tą a 23cią co 5 minut
 - -s - szuka Ortopedy dla dorosłych
 - -c 174 -c 6896 tylko w centrum Warszawa Atrium i Warszawa Inflancka
@@ -107,6 +108,8 @@ domyślnie -f jest ustawiony na *specialization*
 
 ### find-appointment
 
+TODO: _Poniższe opcje aktualne tylko dla medihunter_pushover.py_
+
 opcja|domyślna wartość
 -----|----------------
 -r, --region|Warszawa 
@@ -121,3 +124,20 @@ opcja|domyślna wartość
 --pushover_user|brak, Pushover user Token
 --pushover_device|brak, None nazwa device w Pushover domyślnie pusta=wszystkie
 --pushover_msgtitle|brak - prefix dodawany przed tytułem powiadomienia
+
+## Pushover w medihunter.py
+
+Żeby działały powiadomienia pushover trzeba zrobić eksport:
+
+```bash
+export NOTIFIERS_PUSHOVER_TOKEN=avykwnqc8ohyk73mo1bsuggsm3r4qf
+export NOTIFIERS_PUSHOVER_USER=s4g1zoewbzseogp4knrapx23k9yi95
+```
+
+wartości po znaku = oczywiście podstawiamy swoje
+
+Po wyeksportowaniu powyższego możemy wyszukać lekarza:
+
+```bash
+medihunter find-appointment -n pushover -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-15
+```

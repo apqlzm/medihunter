@@ -1,4 +1,8 @@
-""" This script contains pushover notification + all basic functionalities """
+""" This script contains pushover notification + all basic functionalities 
+
+When all features like notifications and multiple clinic/doctor 
+search move to medihunter this script is going to be abandoned.
+"""
 
 import json
 import time

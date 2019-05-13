@@ -11,6 +11,7 @@ import click
 
 from medicover_session import (Appointment, MedicoverSession,
                                load_available_search_params)
+from medihunter_notifiers import pushover_notify
 
 now = datetime.now()
 now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
@@ -26,7 +27,6 @@ def make_duplicate_checker() -> Callable[[Appointment], bool]:
     found_appointments: List[Appointment] = []
 
     def duplicate_checker(appointment: Appointment) -> bool:
-        print(found_appointments)
         if appointment in found_appointments:
             return False
         found_appointments.append(appointment)
@@ -37,12 +37,18 @@ def make_duplicate_checker() -> Callable[[Appointment], bool]:
 
 duplicate_checker = make_duplicate_checker()
 
+def notify_external_device(message: str, notifier: str):
+    # TODO: add more notification providiers
+    if notifier == 'pushover':
+        pushover_notify(message)
 
-def process_appointments(appointments: List[Appointment], iteration_counter: int):
+
+def process_appointments(appointments: List[Appointment], iteration_counter: int, notifier: str):
 
     applen = len(appointments)
     click.echo(click.style(
         f'(iteration: {iteration_counter}) Found {applen} appointments', fg='green', blink=True))
+        
     for appointment in appointments:
         if duplicate_checker(appointment):
             click.echo(
@@ -50,6 +56,8 @@ def process_appointments(appointments: List[Appointment], iteration_counter: int
                 click.style(appointment.doctor_name, fg='bright_green') + ' ' +
                 appointment.clinic_name
             )
+            notify_external_device(
+                f'{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}', notifier)
 
 
 @click.command()
@@ -60,6 +68,7 @@ def process_appointments(appointments: List[Appointment], iteration_counter: int
 @click.option('--doctor', '-o', default=-1)
 @click.option('--start-date', '-d', default=now_formatted, show_default=True)
 @click.option('--interval', '-i', default=0, show_default=True)
+@click.option('--enable-notifier', '-n', type=click.Choice(['pushover', 'gmail']))
 @click.option('--user', prompt=True)
 @click.password_option(confirmation_prompt=False)
 def find_appointment(user,
@@ -70,7 +79,8 @@ def find_appointment(user,
                      clinic,
                      doctor,
                      start_date,
-                     interval):
+                     interval,
+                     enable_notifier):
     iteration_counter = 1
     med_session = MedicoverSession(username=user, password=password)
 
@@ -97,7 +107,8 @@ def find_appointment(user,
             click.echo(click.style(
                 f'(iteration: {iteration_counter}) No results found', fg='yellow'))
         else:
-            process_appointments(appointments, iteration_counter)
+            process_appointments(
+                appointments, iteration_counter, notifier=enable_notifier)
 
         iteration_counter += 1
         time.sleep(interval*60)
