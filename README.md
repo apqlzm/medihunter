@@ -8,6 +8,13 @@ Narzędzia służy do automatycznego wyszukiwania wizyt u lekarzy. Szczególnie 
     <img src="https://apqlzm.github.io/theme/images/icons/search-every-minute.svg">
 </p>
 
+## Wstęp
+
+Dostępne są dwie wersje skryptu
+
+* **medihunter_pushover.py** - ma funkcje powiadomień pushover, możliwość wyszukiwania kilku klinik i kilku specjalistów jednocześnie. Kod wymaga refaktoru i w związku z tym nie będzie rozwijany. Z czasem planuje go usunąć.  
+* **medihunter.py** - tu dodawane są nowe funkcjonalności. Na chwilę obecną (2019-05-22) można ustawić powiadomienia pushover i w telegramie.
+
 ## Instalacja
 
 Aktywujemy virtualenva (opcjonalnie choć zalecane)
@@ -56,19 +63,19 @@ Oczywiście znalezienie wizyty do endokrynologa nie jest takie proste, więc ust
 medihunter find-appointment -s 27962 -i 1
 ```
 
-a może chcemy poszukać konkretnych endokrynolgów o ID: 12345 i 0987? TODO: _na razie wpisywanie więcej niż jednego specjalistę dostępne tylko w medicover_pushover.py_
+a może chcemy poszukać konkretnych endokrynolgów o ID: 12345 i 0987? **tylko w medicover_pushover.py**
 
 ```bash
 medihunter find-appointment -s 27962 -o 12345 -o 0987
 ```
 
-a może po prostu szukamy dowolnego internisty w przychodniach blisko nas w Atrium i na Prostej? TODO _na razie wpisywanie więcej niż jednej placówki dostępne tylko w medicover_pushover.py_
+a może po prostu szukamy dowolnego internisty w przychodniach blisko nas w Atrium i na Prostej? **tylko w medicover_pushover.py**
 
 ```bash
 medihunter find-appointment -s 9 -c 174 -c 49088
 ```
 
-Lub można dodać bezpośrednio do Crontaba jak poniżej
+Lub można dodać bezpośrednio do Crontaba jak poniżej **wpis w cronie działa tylko z medicover_pushover.py**
 
 - będzie uruchamiany między 6tą a 23cią co 5 minut
 - -s - szuka Ortopedy dla dorosłych
@@ -95,10 +102,11 @@ medihunter find-appointment --help
 medihunter show-params --help
 ```
 
-## Powiadomienia Pushover
+## Powiadomienia Pushover 
+
+dotyczy **medicover_pushover.py**
 
 Poprzez podanie parametrów do powiadomień Poshover https://pushover.net/ możliwe jest przekazywanie powiadomień na wizytę bezpośrednio do aplikacji. Należy podać minimalnie parametry --pushover_token oraz --pushover_user
-
 
 ## Domyślne ustawienia
 
@@ -127,17 +135,50 @@ opcja|domyślna wartość
 
 ## Pushover w medihunter.py
 
-Żeby działały powiadomienia pushover trzeba zrobić eksport:
+Żeby działały powiadomienia pushover trzeba zrobić eksport (wartości ustawiamy swoje):
 
-```bash
+```shell
+# bash
 export NOTIFIERS_PUSHOVER_TOKEN=avykwnqc8ohyk73mo1bsuggsm3r4qf
 export NOTIFIERS_PUSHOVER_USER=s4g1zoewbzseogp4knrapx23k9yi95
 ```
 
-wartości po znaku = oczywiście podstawiamy swoje
+lub
 
-Po wyeksportowaniu powyższego możemy wyszukać lekarza:
+```shell
+# fish
+set -x NOTIFIERS_PUSHOVER_TOKEN avykwnqc8ohyk73mo1bsuggsm3r4qf
+set -x NOTIFIERS_PUSHOVER_USER s4g1zoewbzseogp4knrapx23k9yi95
+```
 
-```bash
+Teraz możemy wyszukać wizyty np. tak:
+
+```shell
 medihunter find-appointment -n pushover -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-15
+```
+
+## Telegram w medihunter.py
+
+Musimy utworzyć bota do powiadomień i kanał na który będą przesyłane powiadomienia. Szczegóły jak to zrobić można znaleźć pod adresem https://core.telegram.org/bots
+
+Jak już mamy to gotowe to wystarczy zrobić eksport dwóch zmiennych (wartości ustawiamy swoje):
+
+```shell
+# bash
+export NOTIFIERS_TELEGRAM_CHAT_ID=avykwnqc8ohyk73mo1bsuggsm3r4qf
+export NOTIFIERS_TELEGRAM_TOKEN=740885363:AdFRNFTIFTc4hC1flAuXE-dyik_Udm6Ma3o
+```
+
+lub
+
+```shell
+# fish
+set -x NOTIFIERS_TELEGRAM_CHAT_ID avykwnqc8ohyk73mo1bsuggsm3r4qf
+set -x NOTIFIERS_TELEGRAM_TOKEN 740885363:AdFRNFTIFTc4hC1flAuXE-dyik_Udm6Ma3o
+```
+
+Teraz możemy wyszukać wizyty i otrzymać notyfikacje w Telegramie:
+
+```shell
+python medihunter.py find-appointment -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-22 -n telegram
 ```
