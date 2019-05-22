@@ -11,7 +11,7 @@ import click
 
 from medicover_session import (Appointment, MedicoverSession,
                                load_available_search_params)
-from medihunter_notifiers import pushover_notify
+from medihunter_notifiers import pushover_notify, telegram_notify
 
 now = datetime.now()
 now_formatted = now.strftime('%Y-%m-%dT02:00:00.000Z')
@@ -41,6 +41,8 @@ def notify_external_device(message: str, notifier: str):
     # TODO: add more notification providiers
     if notifier == 'pushover':
         pushover_notify(message)
+    elif notifier == 'telegram':
+        telegram_notify(message)
 
 
 def process_appointments(appointments: List[Appointment], iteration_counter: int, notifier: str):
@@ -48,7 +50,9 @@ def process_appointments(appointments: List[Appointment], iteration_counter: int
     applen = len(appointments)
     click.echo(click.style(
         f'(iteration: {iteration_counter}) Found {applen} appointments', fg='green', blink=True))
-        
+    
+    notification_message = ''
+
     for appointment in appointments:
         if duplicate_checker(appointment):
             click.echo(
@@ -56,9 +60,10 @@ def process_appointments(appointments: List[Appointment], iteration_counter: int
                 click.style(appointment.doctor_name, fg='bright_green') + ' ' +
                 appointment.clinic_name
             )
-            notify_external_device(
-                f'{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}', notifier)
-
+            notification_message += f'{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}\n'
+    
+    if notification_message:
+        notify_external_device(notification_message, notifier)
 
 @click.command()
 @click.option('--region', '-r', required=True, show_default=True)
@@ -68,7 +73,7 @@ def process_appointments(appointments: List[Appointment], iteration_counter: int
 @click.option('--doctor', '-o', default=-1)
 @click.option('--start-date', '-d', default=now_formatted, show_default=True)
 @click.option('--interval', '-i', default=0, show_default=True)
-@click.option('--enable-notifier', '-n', type=click.Choice(['pushover', 'gmail']))
+@click.option('--enable-notifier', '-n', type=click.Choice(['pushover', 'telegram']))
 @click.option('--user', prompt=True)
 @click.password_option(confirmation_prompt=False)
 def find_appointment(user,
