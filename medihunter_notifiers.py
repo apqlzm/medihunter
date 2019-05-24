@@ -8,11 +8,11 @@ def pushover_notify(message):
     try:
         r = pushover.notify(message=message)
     except BadArguments as e:
-        print(f'Pushover failed {e}')
+        print(f'Pushover failed\n{e}')
         return
 
     if r.status != 'Success':
-        print(f'Pushover notification failed {r.errors}')
+        print(f'Pushover notification failed:\n{r.errors}')
 
 
 def telegram_notify(message):
@@ -21,8 +21,8 @@ def telegram_notify(message):
                             parse_mode='html')
     except BadArguments as e:
         print(f'Telegram notifications require NOTIFIERS_TELEGRAM_CHAT_ID'
-              ' and NOTIFIERS_TELEGRAM_TOKEN environments to be exported\n {e}')
+              f' and NOTIFIERS_TELEGRAM_TOKEN environments to be exported. Detailed exception:\n{e}')
         return
 
     if r.status != 'Success':
-        print(f'Telegram notification failed {r.errors}')
+        print(f'Telegram notification failed\n{r.errors}')

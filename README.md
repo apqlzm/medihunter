@@ -180,5 +180,5 @@ set -x NOTIFIERS_TELEGRAM_TOKEN 740885363:AdFRNFTIFTc4hC1flAuXE-dyik_Udm6Ma3o
 Teraz możemy wyszukać wizyty i otrzymać notyfikacje w Telegramie:
 
 ```shell
-python medihunter.py find-appointment -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-22 -n telegram
+medihunter find-appointment -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-22 -n telegram
 ```
