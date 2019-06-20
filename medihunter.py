@@ -65,13 +65,28 @@ def process_appointments(appointments: List[Appointment], iteration_counter: int
     if notification_message:
         notify_external_device(notification_message, notifier)
 
+
+def validate_arguments(**kwargs) -> bool:
+    if kwargs['service'] == -1 and kwargs['bookingtype'] == 1:
+        click.echo(
+            'Service is required when bookingtype=1 (Diagnostic procedure)')
+        return False
+
+    if kwargs['specialization'] == -1 and kwargs['bookingtype'] == 2:
+        click.echo(
+            'Specialization is required when bookingtype=2 (Consulting)')
+        return False
+    return True
+
+
 @click.command()
 @click.option('--region', '-r', required=True, show_default=True)
 @click.option('--bookingtype', '-b', default=2, show_default=True)
-@click.option('--specialization', '-s', required=True, show_default=True)
+@click.option('--specialization', '-s', default=-1)
 @click.option('--clinic', '-c', default=-1)
 @click.option('--doctor', '-o', default=-1)
 @click.option('--start-date', '-d', default=now_formatted, show_default=True)
+@click.option('--service', '-e', default=-1)
 @click.option('--interval', '-i', default=0, show_default=True)
 @click.option('--enable-notifier', '-n', type=click.Choice(['pushover', 'telegram']))
 @click.option('--user', prompt=True)
@@ -84,8 +99,19 @@ def find_appointment(user,
                      clinic,
                      doctor,
                      start_date,
+                     service,
                      interval,
                      enable_notifier):
+    
+    valid = validate_arguments(
+        bookingtype=bookingtype,
+        specialization=specialization,
+        service=service
+    )
+
+    if not valid:
+        return
+
     iteration_counter = 1
     med_session = MedicoverSession(username=user, password=password)
 
@@ -97,7 +123,7 @@ def find_appointment(user,
 
     click.echo('Logged in')
 
-    med_session.load_search_form()  # TODO: can I get rid of it?
+    med_session.load_search_form()
 
     while interval > 0 or iteration_counter < 2:
         appointments = med_session.search_appointments(
@@ -106,7 +132,8 @@ def find_appointment(user,
             specialization=specialization, 
             clinic=clinic, 
             doctor=doctor,
-            start_date=start_date)
+            start_date=start_date,
+            service=service)
 
         if not appointments:
             click.echo(click.style(

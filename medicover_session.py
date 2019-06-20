@@ -204,6 +204,11 @@ class MedicoverSession():
             'doctorLanguagesIds': []
         }
 
+        if kwargs['bookingtype'] == 1:
+            del search_params['specializationId']
+            search_params['serviceId'] = kwargs['service']
+            search_params['serviceIds'] = [kwargs['service']]
+
         result = self.session.post(
             f'https://{BASE_URL}/api/MyVisits/SearchFreeSlotsToBook', 
             json=search_params, 
