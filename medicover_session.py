@@ -185,30 +185,22 @@ class MedicoverSession():
             })
     
 
+        region_id = int(kwargs['region'])
+        service_ids = [int(kwargs['specialization'])] if kwargs['bookingtype'] == 2 else [
+            int(kwargs['service'])]
+        clinic_ids = [kwargs['clinic']] if kwargs['clinic'] > 0 else []
+        doctor_ids = [kwargs['doctor']] if kwargs['doctor'] > 0 else []
+
         search_params = {
-            'regionId': kwargs['region'],
-            'bookingTypeId': kwargs['bookingtype'],
-            'specializationId': kwargs['specialization'],
-            'clinicId': kwargs['clinic'],
-            'languageId': -1,
-            'doctorId': kwargs['doctor'],
-            'searchSince': kwargs['start_date'],
-            'searchForNextSince': None,
-            'periodOfTheDay': None,
-            'isSetBecauseOfPcc': False,
-            'isSetBecausePromoteSpecialization': False,
-            'regionIds': [kwargs['region']],
-            'specialtyIds': [kwargs['specialization']],
-            'clinicIds': [kwargs['clinic']],
-            'serviceIds': [],
-            'doctorLanguagesIds': []
+            "regionIds": [region_id],
+            "serviceTypeId": kwargs['bookingtype'],
+            "serviceIds": service_ids,
+            "clinicIds": clinic_ids,
+            "doctorLanguagesIds": [],
+            "doctorIds": doctor_ids,
+            "searchSince": kwargs['start_date'],
         }
-
-        if kwargs['bookingtype'] == 1:
-            del search_params['specializationId']
-            search_params['serviceId'] = kwargs['service']
-            search_params['serviceIds'] = [kwargs['service']]
-
+   
         result = self.session.post(
             f'https://{BASE_URL}/api/MyVisits/SearchFreeSlotsToBook', 
             json=search_params, 
