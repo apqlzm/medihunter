@@ -132,6 +132,7 @@ opcja|domyślna wartość
 --pushover_user|brak, Pushover user Token
 --pushover_device|brak, None nazwa device w Pushover domyślnie pusta=wszystkie
 --pushover_msgtitle|brak - prefix dodawany przed tytułem powiadomienia
+-t, --notification-title|brak, dostępna tylko w medihunter.py, wspierana tylko przez Pushover
 
 ## Pushover w medihunter.py
 
