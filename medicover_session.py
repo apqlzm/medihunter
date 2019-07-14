@@ -2,6 +2,7 @@ import json
 import os
 import re
 from collections import namedtuple
+from datetime import datetime, timedelta
 
 import requests
 from bs4 import BeautifulSoup
@@ -207,8 +208,22 @@ class MedicoverSession():
             params={'language': 'pl-PL'},
             headers=headers
         )
-        
-        return self._parse_search_results(result)
+
+        appointments = self._parse_search_results(result)
+
+        if kwargs.get('end_date') is not None:
+            def is_appointment_before_date(appointment: Appointment, date: datetime) -> bool:
+                def parse_appointment_datetime_to_datetime(iso_date: str) -> datetime:
+                    return datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S")
+
+                def get_end_of_day(dt: datetime) -> datetime: return dt + timedelta(days=1, microseconds=-1)
+
+                return parse_appointment_datetime_to_datetime(appointment.appointment_datetime) <= get_end_of_day(date)
+
+            end_date = datetime.strptime(kwargs['end_date'], "%Y-%m-%d")
+            appointments = [a for a in appointments if is_appointment_before_date(a, end_date)]
+
+        return appointments
 
     def load_search_form(self):
         return self.session.get(
