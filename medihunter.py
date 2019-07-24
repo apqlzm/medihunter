@@ -37,15 +37,16 @@ def make_duplicate_checker() -> Callable[[Appointment], bool]:
 
 duplicate_checker = make_duplicate_checker()
 
-def notify_external_device(message: str, notifier: str):
-    # TODO: add more notification providiers
+def notify_external_device(message: str, notifier: str, **kwargs):
+    # TODO: add more notification providers
     if notifier == 'pushover':
-        pushover_notify(message)
+        title = kwargs.get('notification_title')
+        pushover_notify(message, title)
     elif notifier == 'telegram':
         telegram_notify(message)
 
 
-def process_appointments(appointments: List[Appointment], iteration_counter: int, notifier: str):
+def process_appointments(appointments: List[Appointment], iteration_counter: int, notifier: str, **kwargs):
 
     applen = len(appointments)
     click.echo(click.style(
@@ -63,7 +64,8 @@ def process_appointments(appointments: List[Appointment], iteration_counter: int
             notification_message += f'{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}\n'
     
     if notification_message:
-        notify_external_device(notification_message, notifier)
+        notification_title = kwargs.get('notification_title')
+        notify_external_device(notification_message, notifier, notification_title=notification_title)
 
 
 def validate_arguments(**kwargs) -> bool:
@@ -89,6 +91,7 @@ def validate_arguments(**kwargs) -> bool:
 @click.option('--service', '-e', default=-1)
 @click.option('--interval', '-i', default=0, show_default=True)
 @click.option('--enable-notifier', '-n', type=click.Choice(['pushover', 'telegram']))
+@click.option('--notification-title', '-t')
 @click.option('--user', prompt=True)
 @click.password_option(confirmation_prompt=False)
 def find_appointment(user,
@@ -101,7 +104,8 @@ def find_appointment(user,
                      start_date,
                      service,
                      interval,
-                     enable_notifier):
+                     enable_notifier,
+                     notification_title):
     
     valid = validate_arguments(
         bookingtype=bookingtype,
@@ -140,7 +144,7 @@ def find_appointment(user,
                 f'(iteration: {iteration_counter}) No results found', fg='yellow'))
         else:
             process_appointments(
-                appointments, iteration_counter, notifier=enable_notifier)
+                appointments, iteration_counter, notifier=enable_notifier, notification_title=notification_title)
 
         iteration_counter += 1
         time.sleep(interval*60)

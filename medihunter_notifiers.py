@@ -4,9 +4,12 @@ from notifiers.exceptions import BadArguments
 pushover = get_notifier('pushover')
 telegram = get_notifier('telegram')
 
-def pushover_notify(message):
+def pushover_notify(message, title: str = None):
     try:
-        r = pushover.notify(message=message)
+        if title is None:
+            r = pushover.notify(message=message)
+        else:
+            r = pushover.notify(message=message, title=title)
     except BadArguments as e:
         print(f'Pushover failed\n{e}')
         return
