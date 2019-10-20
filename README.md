@@ -127,6 +127,7 @@ opcja|domyślna wartość
 -c, --clinic|wszystkie jakie są w regionie/mieście, można użyć parametru wielokrotnie w celu szukania wizyt w konkretnych klinikach
 -o, --doctor|wszyscy lekarze, można użyć parametru wielokrotnie w celu sprawdzenie kilku lekarzy
 -d, --start-date|data bieżąca (format: YYYY-mm-dd)
+-f, --end-date|brak (format: YYYY-mm-dd), dostępna tylko w medihunter.py
 -i, --interval|brak
 --pushover_token|brak, Pushover Application Token
 --pushover_user|brak, Pushover user Token
