@@ -380,6 +380,86 @@
         {
             "text": "Urolog dorośli",
             "id": 30
+        },
+        {
+            "text": "Alergolog dziecięcy",
+            "id": 88
+        },
+        {
+            "text": "Alergolog dziecięcy - porada telefoniczna",
+            "id": 44064
+        },
+        {
+            "text": "Chirurg dziecięcy",
+            "id": 76
+        },
+        {
+            "text": "Chirurg dziecięcy - porada telefoniczna",
+            "id": 44254
+        },
+        {
+            "text": "Dermatolog dziecięcy",
+            "id": 1188
+        },
+        {
+            "text": "Medycyna podróży - dzieci",
+            "id": 9974
+        },
+        {
+            "text": "Medycyna rodzinna - dzieci chore",
+            "id": 1590
+        },
+        {
+            "text": "Medycyna rodzinna - dzieci zdrowe",
+            "id": 1588
+        },
+        {
+            "text": "Neurolog dziecięcy",
+            "id": 75
+        },
+        {
+            "text": "Neurolog dziecięcy - porada telefoniczna",
+            "id": 44076
+        },
+        {
+            "text": "Okulista dziecięcy",
+            "id": 200
+        },
+        {
+            "text": "Okulista dziecięcy - porada telefoniczna",
+            "id": 44080
+        },
+        {
+            "text": "Ortopeda dziecięcy",
+            "id": 83
+        },
+        {
+            "text": "Ortopeda dziecięcy - porada telefoniczna",
+            "id": 44286
+        },
+        {
+            "text": "Pediatra - dzieci chore",
+            "id": 158
+        },
+        {
+            "text": "Pediatra - dzieci chore weekend",
+            "id": 6690
+        },
+        {
+            "text": "Pediatra - dzieci zdrowe",
+            "id": 132
+        },
+        {
+            "text": "Pediatra - porada telefoniczna",
+            "id": 19048
+        },
+        {
+            "text": "Poradnia Układu Ruchu - dzieci",
+            "id": 27160
+        },
+        {
+            "text": "Reumatolog dziecięcy",
+            "id": 97
         }
     ],
     "availableClinics": [
