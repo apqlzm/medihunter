@@ -128,6 +128,8 @@ opcja|domyślna wartość
 -o, --doctor|wszyscy lekarze, można użyć parametru wielokrotnie w celu sprawdzenie kilku lekarzy
 -d, --start-date|data bieżąca (format: YYYY-mm-dd)
 -f, --end-date|brak (format: YYYY-mm-dd), dostępna tylko w medihunter.py
+-a, --start-time|"0:00" (format: hh:mm), dostępna tylko w medihunter.py
+-g, --end-time|"23:59" (format: hh:mm), dostępna tylko w medihunter.py
 -i, --interval|brak
 --pushover_token|brak, Pushover Application Token
 --pushover_user|brak, Pushover user Token

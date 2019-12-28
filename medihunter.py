@@ -89,6 +89,8 @@ def validate_arguments(**kwargs) -> bool:
 @click.option('--doctor', '-o', default=-1)
 @click.option('--start-date', '-d', default=now_formatted, show_default=True)
 @click.option('--end-date', '-f')
+@click.option('--start-time', '-a', default='0:00', show_default=True)
+@click.option('--end-time', '-g', default='23:59', show_default=True)
 @click.option('--service', '-e', default=-1)
 @click.option('--interval', '-i', default=0, show_default=True)
 @click.option('--enable-notifier', '-n', type=click.Choice(['pushover', 'telegram']))
@@ -104,6 +106,8 @@ def find_appointment(user,
                      doctor,
                      start_date,
                      end_date,
+                     start_time,
+                     end_time,
                      service,
                      interval,
                      enable_notifier,
@@ -140,6 +144,8 @@ def find_appointment(user,
             doctor=doctor,
             start_date=start_date,
             end_date=end_date,
+            start_time=start_time,
+            end_time=end_time,
             service=service)
 
         if not appointments:

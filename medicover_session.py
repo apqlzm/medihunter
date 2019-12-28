@@ -200,6 +200,8 @@ class MedicoverSession():
             "doctorLanguagesIds": [],
             "doctorIds": doctor_ids,
             "searchSince": kwargs['start_date'],
+            "startTime": kwargs['start_time'],
+            "endTime": kwargs['end_time']
         }
    
         result = self.session.post(
