@@ -120,7 +120,7 @@ TODO: _Poniższe opcje aktualne tylko dla medihunter_pushover.py_
 
 opcja|domyślna wartość
 -----|----------------
--r, --region|Warszawa 
+-r, --region|Warszawa
 -b, --bookingtype|2, Typ wizyty 2 = Konsultacja (domyślnie), 1 = Badanie diagnostyczne
 -s, --specialization|brak Specjalizacja, podać w przypadku gdy Typ wizyty to Konsultacja (bookingtype = 2 domyślnie)
 -e, --service|brak, Typ/identyfikator usługi, podać w przypadku gdy Typ wizyty to usługa (bookingtype = 1), działa analogicznie do specjalizacji 
@@ -130,6 +130,7 @@ opcja|domyślna wartość
 -f, --end-date|brak (format: YYYY-mm-dd), dostępna tylko w medihunter.py
 -a, --start-time|"0:00" (format: hh:mm), dostępna tylko w medihunter.py
 -g, --end-time|"23:59" (format: hh:mm), dostępna tylko w medihunter.py
+-j, --days-ahead| 1 = pokazuje wizyty dla pierwszego znalezionego dnia, dostępna tylko w medihunter.py
 -i, --interval|brak
 --pushover_token|brak, Pushover Application Token
 --pushover_user|brak, Pushover user Token

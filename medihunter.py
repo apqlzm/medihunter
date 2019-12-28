@@ -4,7 +4,7 @@ this is a startpoint for adding new features
 
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Callable, List
 
 import click
@@ -93,6 +93,7 @@ def validate_arguments(**kwargs) -> bool:
 @click.option('--end-time', '-g', default='23:59', show_default=True)
 @click.option('--service', '-e', default=-1)
 @click.option('--interval', '-i', default=0, show_default=True)
+@click.option('--days-ahead', '-j', default=1, show_default=True)
 @click.option('--enable-notifier', '-n', type=click.Choice(['pushover', 'telegram']))
 @click.option('--notification-title', '-t')
 @click.option('--user', prompt=True)
@@ -110,6 +111,7 @@ def find_appointment(user,
                      end_time,
                      service,
                      interval,
+                     days_ahead,
                      enable_notifier,
                      notification_title):
     
@@ -136,17 +138,29 @@ def find_appointment(user,
     med_session.load_search_form()
 
     while interval > 0 or iteration_counter < 2:
-        appointments = med_session.search_appointments(
+        appointments = []
+        start_date_param = start_date
+        for _ in range(days_ahead):
+            found_appointments = med_session.search_appointments(
             region=region, 
             bookingtype=bookingtype,
             specialization=specialization, 
             clinic=clinic, 
             doctor=doctor,
-            start_date=start_date,
+            start_date=start_date_param,
             end_date=end_date,
             start_time=start_time,
             end_time=end_time,
             service=service)
+
+            if not found_appointments:
+                break
+
+            appointment_datetime = found_appointments[-1].appointment_datetime
+            appointment_datetime = datetime.strptime(appointment_datetime, "%Y-%m-%dT%H:%M:%S")
+            appointment_datetime = appointment_datetime + timedelta(days=1)
+            start_date_param = appointment_datetime.date().isoformat()
+            appointments.extend(found_appointments)
 
         if not appointments:
             click.echo(click.style(
