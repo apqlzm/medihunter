@@ -129,6 +129,12 @@ def find_appointment(
     enable_notifier,
     notification_title,
 ):
+    
+    if end_date:
+        start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
+        diff = end_date_dt - start_date_dt
+        days_ahead = diff.days
 
     valid = validate_arguments(
         bookingtype=bookingtype, specialization=specialization, service=service
@@ -149,7 +155,7 @@ def find_appointment(
     click.echo("Logged in")
 
     med_session.load_search_form()
-
+    
     while interval > 0 or iteration_counter < 2:
         appointments = []
         start_date_param = start_date
