@@ -129,7 +129,7 @@ def find_appointment(
     enable_notifier,
     notification_title,
 ):
-    
+
     if end_date:
         start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
         end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
@@ -155,7 +155,7 @@ def find_appointment(
     click.echo("Logged in")
 
     med_session.load_search_form()
-    
+
     while interval > 0 or iteration_counter < 2:
         appointments = []
         start_date_param = start_date
@@ -217,6 +217,23 @@ def show_params(field_name):
         print(f" {text} (id={id_})")
 
 
+@click.command()
+@click.option("--user", prompt=True)
+@click.password_option(confirmation_prompt=False)
+def my_plan(user, password):
+    med_session = MedicoverSession(username=user, password=password)
+    try:
+        med_session.log_in()
+    except Exception:
+        click.secho("Unsuccessful logging in", fg="red")
+        return
+    click.echo("Logged in")
+    plan = med_session.get_plan()
+
+    with open("plan.tsv", mode="wt", encoding="utf-8") as f:
+        f.write(plan)
+
+
 @click.group()
 def medihunter():
     pass
@@ -224,6 +241,7 @@ def medihunter():
 
 medihunter.add_command(show_params)
 medihunter.add_command(find_appointment)
+medihunter.add_command(my_plan)
 
 
 if __name__ == "__main__":

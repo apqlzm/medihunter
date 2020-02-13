@@ -270,6 +270,37 @@ class MedicoverSession:
         self.session.close()
         return response
 
+    def get_plan(self):
+        """ Download Medicover plan """
+        output = ""
+        medical_services_website = self.session.get(
+            "https://mol.medicover.pl/Medicover.MedicalServices/MedicalServices"
+        )
+        soup = BeautifulSoup(medical_services_website.content, "lxml")
+        drop_down = soup.find("select")
+        drop_down_options = drop_down.find_all("option")
+        for option in drop_down_options:
+            option_id = option["value"]
+            if option_id == "":
+                continue
+            option_html = self.session.get(
+                f"https://mol.medicover.pl/MedicalServices/MedicalServices/ShowResults?serviceId={option_id}"
+            )
+            soup2 = BeautifulSoup(option_html.content, "lxml")
+            option_header = soup2.find("h4").text
+            option_header = option_header.replace("\r\n", "").replace("\n", "")
+            option_texts = []
+            for p_tag in soup2.find_all("p"):
+                option_texts.append(
+                    p_tag.text.strip().replace("\r\n", "").replace("\n", "")
+                )
+            option_text = "\t|".join(option_texts)
+            option_result = f"{option_id}\t{option_header}\t{option_text}"
+            print(option_result)
+            output = output + option_result + "\n"
+
+        return output
+
 
 def load_available_search_params(field_name):
     FIELDS_NAMES = {

@@ -87,6 +87,14 @@ Będzie korzystał z podanych parametrów użytkownika Medicoveru i Pushover do 
 */5 6-23 * * * /usr/bin/python3.7 /home/user/medihunter.py find-appointment -s 163 -c 174 -c 6896 --user MEDICOVER_USER --password MEDICOVER_PASS --pushover_msgtitle 'Ortopeda Centrum' --pushover_token PUSHOVER_TOKEN --pushover_user PUSHOVER_USER >> /var/log/medihunter.log 2>&1
 ```
 
+### my-plan
+
+Ściąga i zapisuje dostępne usługi wraz z informacjami na temat tego czy są dostępne w ramach wykupionego pakietu, a jeśli nie to czy mamy na nie jakieś zniżki. Niektóre usługi mają limity, to też powinno być tu widoczne. Plik wynikowy ma format  tsv (Tab-separated_values). Przykład użycia:
+
+```bash
+medihunter my-plan --user mylogin --password mypassword
+```
+
 ## Wyświetlanie pomocy
 
 Ogólna pomoc
