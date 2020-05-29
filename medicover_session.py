@@ -7,8 +7,6 @@ from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
 
-from errors import IdsrvXsrfNotFound
-
 Appointment = namedtuple(
     "Appointment", ["doctor_name", "clinic_name", "appointment_datetime"]
 )
@@ -32,24 +30,32 @@ class MedicoverSession:
             "Upgrade-Insecure-Requests": "1",
         }
 
-    def login_form_data(self, page_text):
-        """
-            Helper function allowing to extract xsref hash and prepare data for login.
-        """
+    def extract_data_from_login_form(self, page_text: str):
+        """ Extract values from input fields and prepare data for login request. """
+        data = {"UserName": self.username, "Password": self.password}
+        soup = BeautifulSoup(page_text, "html.parser")
+        for input_tag in soup.find_all("input"):
+            if input_tag["name"] == "ReturnUrl":
+                data["ReturnUrl"] = input_tag["value"]
+            elif input_tag["name"] == "__RequestVerificationToken":
+                data["__RequestVerificationToken"] = input_tag["value"]
+        return data
 
-        data = {"username": self.username, "password": self.password}
-        if "idsrv.xsrf" in page_text:
-            for line in page_text.split("\n"):
-                if "idsrv.xsrf" in line:
-                    line = line.replace("&quot;", '"')
-                    line = line.replace("</script>", "")
-                    line = re.sub(r"<script.*?>", "", line)
-                    dzej_son = json.loads(line)
-                    xsrf = dzej_son["antiForgery"]["value"]
-                    data["idsrv.xsrf"] = xsrf
-                    break
-        else:
-            raise IdsrvXsrfNotFound
+    def form_to_dict(self, page_text):
+        """ Extract values from input fields. """
+        data = {}
+        soup = BeautifulSoup(page_text, "html.parser")
+        for input_tag in soup.find_all("input"):
+            if input_tag["name"] == "code":
+                data["code"] = input_tag["value"]
+            elif input_tag["name"] == "id_token":
+                data["id_token"] = input_tag["value"]
+            elif input_tag["name"] == "scope":
+                data["scope"] = input_tag["value"]
+            elif input_tag["name"] == "state":
+                data["state"] = input_tag["value"]
+            elif input_tag["name"] == "session_state":
+                data["session_state"] = input_tag["value"]
         return data
 
     def oauth_sign_in(self, page_text):
@@ -59,32 +65,8 @@ class MedicoverSession:
         soup = BeautifulSoup(page_text, "html.parser")
         return soup.form["action"]
 
-    def token_form_data(self, page_text):
-        """
-            Helper function allowing to extract code, token, scope, state and session_state from
-            page content
-        """
-        o = dict()
-        soup = BeautifulSoup(page_text, "html.parser")
-        for descet in soup.form.descendants:
-            if descet.name == "input":
-                if descet["name"] == "code":
-                    o["code"] = descet["value"]
-                elif descet["name"] == "id_token":
-                    o["id_token"] = descet["value"]
-                elif descet["name"] == "scope":
-                    o["scope"] = descet["value"]
-                elif descet["name"] == "session_state":
-                    o["session_state"] = descet["value"]
-                elif descet["name"] == "state":
-                    o["state"] = descet["value"]
-        return o
-
     def log_in(self):
-        """
-            Login to Medicover website
-        """
-        # TODO: this method needs to be cleaned
+        """Login to Medicover website"""
 
         # 1. GET https://mol.medicover.pl/Users/Account/LogOn?ReturnUrl=%2F
         response = self.session.get(
@@ -102,55 +84,73 @@ class MedicoverSession:
         next_url = response.headers["Location"]
 
         # 3. GET
-        # https://oauth.medicover.pl/login?signin=5512f89689e74ce9d5515f6a84d2b176
+        # https://oauth.medicover.pl/login?signin=5512f89689e74ce9d5515f6a84d76
         response = self.session.get(
             next_url, headers=self.headers, allow_redirects=False
         )
-        login_url = response.url
-        data = self.login_form_data(response.text)
+        next_referer = next_url
 
-        # 4. POST
-        # https://oauth.medicover.pl/login?signin=5512f89689e74ce9d5515f6a84d2b176
-        next_url = login_url
-        self.session.headers.update(
-            {"Content-Type": "application/x-www-form-urlencoded"}
+        # 4. GET
+        # https://oauth.medicover.pl/external?provider=IS3&signin=944f8051df4165a710e592dd7f8a&owner=Mcov_Mol&ui_locales=pl-PL
+
+        response = self.session.get(
+            "https://oauth.medicover.pl/external",
+            headers=self.headers.update({"Referer": next_referer}),
+            params={
+                "provider": "IS3",
+                "signin": next_url.split("=")[-1],
+                "owner": "Mcov_Mol",
+                "ui_locales": "pl-PL",
+            },
+            allow_redirects=False,
         )
-        self.session.headers.update({"Origin": "https://oauth.medicover.pl"})
-        self.session.headers.update({"Referer": login_url})
-        response = self.session.post(
-            next_url, headers=self.headers, data=data, allow_redirects=False
-        )
+        next_url = response.headers["Location"]
 
         # 5. GET
-        # https://oauth.medicover.pl/connect/authorize?client_id=Mcov_Mol&response_type=code%20id_token&scope=openid&redirect_uri=h...
-        next_url = response.headers["Location"]
+        # https://login.medicover.pl/connect/authorize?client_id=is3&redirect_uri=https%3a%2f%2foauth.medicover.pl...
+
         response = self.session.get(
-            next_url, headers=self.headers, allow_redirects=False
-        )
-        self.session.headers.update({"Referer": next_url})
-        next_url = self.oauth_sign_in(response.text)
-        data = self.token_form_data(response.text)
-        self.session.headers.update(
-            {"Content-Type": "application/x-www-form-urlencoded"}
+            next_url, headers=self.headers.update({"Referer": next_referer}),
         )
 
-        # 6. POST
-        # https://mol.medicover.pl/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn
+        data = self.extract_data_from_login_form(response.text)
+        login_url = response.url
+
+        # 6. POST  
+        # https://login.medicover.pl/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dis3...
         response = self.session.post(
-            next_url, headers=self.headers, data=data, allow_redirects=False
+            login_url,
+            headers=self.headers,
+            data=data
         )
-        self.session.headers.pop("Content-Type")
-        next_url = "https://mol.medicover.pl/"
-        self.session.headers.update({"Referer": login_url})
+        data = self.form_to_dict(response.text)
 
-        # 7. GET https://mol.medicover.pl/
-        response = self.session.get(
-            next_url, headers=self.headers, data=data, allow_redirects=False
+        # 7. POST
+        response = self.session.post(
+            "https://oauth.medicover.pl/signin-oidc",
+            headers=self.headers,
+            data=data
+            # , allow_redirects=False
+        )
+        data = self.form_to_dict(response.text)
+        next_referer = response.url
+
+        # 8 POST
+        response = self.session.post(
+            "https://mol.medicover.pl/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn",
+            headers=self.headers.update({"Referer": next_referer}),
+            data=data,
         )
 
-        # 8. GET https://mol.medicover.pl/
+        # 9. GET 
         response = self.session.get(
-            next_url, headers=self.headers, data=data, allow_redirects=False
+            "https://mol.medicover.pl/",
+            headers=self.headers.update(
+                {
+                    "Referer": "https://mol.medicover.pl/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn"
+                }
+            ),
+            data=data,
         )
         return response
 
@@ -258,10 +258,7 @@ class MedicoverSession:
         )
 
     def log_out(self):
-        """
-            Logout from Medicover website
-            Session lasts 10 minutes anyway
-        """
+        """Logout from Medicover website"""
         next_url = "https://mol.medicover.pl/Users/Account/LogOff"
         self.headers.update({"Referer": "https://mol.medicover.pl/"})
         self.headers.update(self.session.headers)
@@ -271,7 +268,7 @@ class MedicoverSession:
         return response
 
     def get_plan(self):
-        """ Download Medicover plan """
+        """Download Medicover plan"""
         output = ""
         medical_services_website = self.session.get(
             "https://mol.medicover.pl/Medicover.MedicalServices/MedicalServices"
