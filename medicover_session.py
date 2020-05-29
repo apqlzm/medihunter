@@ -316,7 +316,7 @@ def load_available_search_params(field_name):
 
     params_path = os.path.join(os.path.dirname(__file__), "ids/params.json")
 
-    with open(params_path) as f:
+    with open(params_path, encoding='utf-8') as f:
         params_file_content = f.read()
 
     params = json.loads(params_file_content)

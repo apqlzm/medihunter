@@ -10,6 +10,7 @@ setup(
         'requests',
         'beautifulsoup4',
         'python-pushover',
+        'notifiers'
     ],
     entry_points='''
         [console_scripts]
