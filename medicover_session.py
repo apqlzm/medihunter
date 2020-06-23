@@ -116,7 +116,7 @@ class MedicoverSession:
         data = self.extract_data_from_login_form(response.text)
         login_url = response.url
 
-        # 6. POST  
+        # 6. POST
         # https://login.medicover.pl/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dis3...
         response = self.session.post(
             login_url,
@@ -142,7 +142,7 @@ class MedicoverSession:
             data=data,
         )
 
-        # 9. GET 
+        # 9. GET
         response = self.session.get(
             "https://mol.medicover.pl/",
             headers=self.headers.update(
@@ -297,6 +297,32 @@ class MedicoverSession:
             output = output + option_result + "\n"
 
         return output
+
+    def get_appointments(self):
+        """Download all past and future appointments."""
+        appointments = []
+        page = 1
+        while True:
+            response = self.session.post(
+                "https://mol.medicover.pl/api/MyVisits/SearchVisitsToView",
+                headers={
+                    # Makes the response come as json.
+    	              "X-Requested-With": "XMLHttpRequest",
+                },
+                data={
+                    "Page": page,
+                    "PageSize": 12,
+                }
+            )
+            response_json = response.json()
+            appointments += response_json["items"]
+            if len(appointments) >= response_json["totalCount"]:
+                break
+            # Just in case the condition above fails for some reason.
+            if not len(response_json["items"]):
+                break
+            page += 1
+        return appointments
 
 
 def load_available_search_params(field_name):
