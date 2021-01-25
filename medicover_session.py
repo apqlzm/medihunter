@@ -14,7 +14,7 @@ Appointment = namedtuple(
 
 class MedicoverSession:
     """
-        Creating (log_in) and killing (log_out) session.
+    Creating (log_in) and killing (log_out) session.
     """
 
     def __init__(self, username, password):
@@ -60,7 +60,7 @@ class MedicoverSession:
 
     def oauth_sign_in(self, page_text):
         """
-            Helper function allowing to extract oauth link from page content
+        Helper function allowing to extract oauth link from page content
         """
         soup = BeautifulSoup(page_text, "html.parser")
         return soup.form["action"]
@@ -110,7 +110,8 @@ class MedicoverSession:
         # https://login.medicover.pl/connect/authorize?client_id=is3&redirect_uri=https%3a%2f%2foauth.medicover.pl...
 
         response = self.session.get(
-            next_url, headers=self.headers.update({"Referer": next_referer}),
+            next_url,
+            headers=self.headers.update({"Referer": next_referer}),
         )
 
         data = self.extract_data_from_login_form(response.text)
@@ -118,11 +119,7 @@ class MedicoverSession:
 
         # 6. POST
         # https://login.medicover.pl/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dis3...
-        response = self.session.post(
-            login_url,
-            headers=self.headers,
-            data=data
-        )
+        response = self.session.post(login_url, headers=self.headers, data=data)
         data = self.form_to_dict(response.text)
 
         # 7. POST
@@ -215,9 +212,11 @@ class MedicoverSession:
             "clinicIds": clinic_ids,
             "doctorLanguagesIds": [],
             "doctorIds": doctor_ids,
-            "searchSince": kwargs["start_date"],
+            "searchSince": kwargs["start_date"] + "T00:00:00.000Z",
             "startTime": kwargs["start_time"],
             "endTime": kwargs["end_time"],
+            "selectedSpecialties": None,
+            "visitType": "center" if kwargs["bookingtype"] == 1 else 2,
         }
 
         result = self.session.post(
@@ -226,9 +225,10 @@ class MedicoverSession:
             params={"language": "pl-PL"},
             headers=headers,
         )
-
-        appointments = self._parse_search_results(result)
-
+        try:
+            appointments = self._parse_search_results(result)
+        except KeyError as exc:
+            return []
         if kwargs.get("end_date") is not None:
 
             def is_appointment_before_date(
@@ -307,12 +307,12 @@ class MedicoverSession:
                 "https://mol.medicover.pl/api/MyVisits/SearchVisitsToView",
                 headers={
                     # Makes the response come as json.
-    	              "X-Requested-With": "XMLHttpRequest",
+                    "X-Requested-With": "XMLHttpRequest",
                 },
                 data={
                     "Page": page,
                     "PageSize": 12,
-                }
+                },
             )
             response_json = response.json()
             appointments += response_json["items"]
@@ -342,7 +342,7 @@ def load_available_search_params(field_name):
 
     params_path = os.path.join(os.path.dirname(__file__), "ids/params.json")
 
-    with open(params_path, encoding='utf-8') as f:
+    with open(params_path, encoding="utf-8") as f:
         params_file_content = f.read()
 
     params = json.loads(params_file_content)
