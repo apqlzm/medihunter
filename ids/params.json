@@ -916,7 +916,8 @@
         "searchForNextSince": null,
         "periodOfTheDay": 0,
         "isSetBecauseOfPcc": false,
-        "isSetBecausePromoteSpecialization": false
+        "isSetBecausePromoteSpecialization": false,
+        "disablePhoneSearch": null
     },
     "canSearch": true
 }

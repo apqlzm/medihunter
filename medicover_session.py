@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 
 Appointment = namedtuple(
-    "Appointment", ["doctor_name", "clinic_name", "appointment_datetime"]
+    "Appointment", ["doctor_name", "clinic_name", "appointment_datetime", "is_phone_consultation"]
 )
 
 
@@ -170,6 +170,7 @@ class MedicoverSession:
             doctor_name=r["doctorName"],
             clinic_name=r["clinicName"],
             appointment_datetime=r["appointmentDate"],
+            is_phone_consultation=r["isPhoneConsultation"],
         )
         return appointment
 
@@ -208,6 +209,8 @@ class MedicoverSession:
         clinic_ids = [kwargs["clinic"]] if kwargs["clinic"] > 0 else []
         doctor_ids = [kwargs["doctor"]] if kwargs["doctor"] > 0 else []
 
+        disable_phone_search = kwargs["disable_phone_search"] if "disable_phone_search" in kwargs else False
+
         search_params = {
             "regionIds": [region_id],
             "serviceTypeId": kwargs["bookingtype"],
@@ -220,6 +223,7 @@ class MedicoverSession:
             "endTime": kwargs["end_time"],
             "selectedSpecialties": None,
             "visitType": "center" if kwargs["bookingtype"] == 1 else 2,
+            "disablePhoneSearch": disable_phone_search,
         }
 
         result = self.session.post(
