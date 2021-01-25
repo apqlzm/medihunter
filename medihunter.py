@@ -1,4 +1,4 @@
-""" Base script without pushover notifications 
+""" Base script without pushover notifications
 this is a startpoint for adding new features
 """
 
@@ -21,7 +21,7 @@ now_formatted = now.strftime("%Y-%m-%dT02:00:00.000Z")
 
 
 def make_duplicate_checker() -> Callable[[Appointment], bool]:
-    """Closure which checks if appointment was already found before 
+    """Closure which checks if appointment was already found before
 
     Returns:
         True if appointment ocurred first time
@@ -234,6 +234,23 @@ def my_plan(user, password):
         f.write(plan)
 
 
+@click.command()
+@click.option("--user", prompt=True)
+@click.password_option(confirmation_prompt=False)
+def my_appointments(user, password):
+    med_session = MedicoverSession(username=user, password=password)
+    try:
+        med_session.log_in()
+    except Exception:
+        click.secho("Unsuccessful logging in", fg="red")
+        return
+    click.echo("Logged in")
+    appointments = med_session.get_appointments()
+
+    with open("appointments.json", mode="wt", encoding="utf-8") as f:
+        json.dump(appointments, f)
+
+
 @click.group()
 def medihunter():
     pass
@@ -242,6 +259,7 @@ def medihunter():
 medihunter.add_command(show_params)
 medihunter.add_command(find_appointment)
 medihunter.add_command(my_plan)
+medihunter.add_command(my_appointments)
 
 
 if __name__ == "__main__":
