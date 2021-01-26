@@ -161,14 +161,17 @@ class MedicoverSession:
         appointments = []
 
         for r in result:
-            appointment = Appointment(
-                doctor_name=r["doctorName"],
-                clinic_name=r["clinicName"],
-                appointment_datetime=r["appointmentDate"],
-            )
-            appointments.append(appointment)
+            appointments.append(self.convert_search_result_to_appointment(r))
 
         return appointments
+
+    def convert_search_result_to_appointment(self, r):
+        appointment = Appointment(
+            doctor_name=r["doctorName"],
+            clinic_name=r["clinicName"],
+            appointment_datetime=r["appointmentDate"],
+        )
+        return appointment
 
     def search_appointments(self, *args, **kwargs):
 
@@ -315,7 +318,8 @@ class MedicoverSession:
                 },
             )
             response_json = response.json()
-            appointments += response_json["items"]
+            for r in response_json["items"]:
+                appointments.append(self.convert_search_result_to_appointment(r))
             if len(appointments) >= response_json["totalCount"]:
                 break
             # Just in case the condition above fails for some reason.

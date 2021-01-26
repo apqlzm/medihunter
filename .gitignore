@@ -72,6 +72,9 @@ docs/_build/
 # PyBuilder
 target/
 
+#IntelijIdea
+/.idea/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -108,3 +111,6 @@ venv.bak/
 visits.db.bak
 visits.db.dat
 visits.db.dir
+
+#local runs
+/appointments.json

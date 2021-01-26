@@ -67,13 +67,7 @@ def process_appointments(
 
     for appointment in appointments:
         if duplicate_checker(appointment):
-            click.echo(
-                appointment.appointment_datetime
-                + " "
-                + click.style(appointment.doctor_name, fg="bright_green")
-                + " "
-                + appointment.clinic_name
-            )
+            echo_appointment(appointment)
             notification_message += f"{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}\n"
 
     if notification_message:
@@ -81,6 +75,16 @@ def process_appointments(
         notify_external_device(
             notification_message, notifier, notification_title=notification_title
         )
+
+
+def echo_appointment(appointment):
+    click.echo(
+        appointment.appointment_datetime
+        + " "
+        + click.style(appointment.doctor_name, fg="bright_green")
+        + " "
+        + appointment.clinic_name
+    )
 
 
 def validate_arguments(**kwargs) -> bool:
@@ -247,8 +251,15 @@ def my_appointments(user, password):
     click.echo("Logged in")
     appointments = med_session.get_appointments()
 
-    with open("appointments.json", mode="wt", encoding="utf-8") as f:
-        json.dump(appointments, f)
+    planned_appointments = list(filter(lambda a: datetime.strptime(
+        a.appointment_datetime, "%Y-%m-%dT%H:%M:%S"
+    ) >= now, appointments))
+    if planned_appointments:
+        click.echo("Showing only planned appointments:")
+        for planned_appointment in planned_appointments:
+            echo_appointment(planned_appointment)
+    else:
+        click.echo("No planned appointments.")
 
 
 @click.group()
