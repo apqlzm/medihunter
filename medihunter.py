@@ -84,6 +84,8 @@ def echo_appointment(appointment):
         + click.style(appointment.doctor_name, fg="bright_green")
         + " "
         + appointment.clinic_name
+        + " "
+        + ("(Telefonicznie)" if appointment.is_phone_consultation else "(Stacjonarnie)")
     )
 
 
@@ -115,6 +117,7 @@ def validate_arguments(**kwargs) -> bool:
 @click.option("--notification-title", "-t")
 @click.option("--user", prompt=True)
 @click.password_option(confirmation_prompt=False)
+@click.option("--disable-phone-search", is_flag=True)
 def find_appointment(
     user,
     password,
@@ -132,6 +135,7 @@ def find_appointment(
     days_ahead,
     enable_notifier,
     notification_title,
+    disable_phone_search,
 ):
 
     if end_date:
@@ -175,6 +179,7 @@ def find_appointment(
                 start_time=start_time,
                 end_time=end_time,
                 service=service,
+                disable_phone_search=disable_phone_search
             )
 
             if not found_appointments:

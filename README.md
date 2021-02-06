@@ -140,6 +140,7 @@ opcja|domyślna wartość
 -g, --end-time|"23:59" (format: hh:mm), dostępna tylko w medihunter.py
 -j, --days-ahead| 1 = pokazuje wizyty dla pierwszego znalezionego dnia, dostępna tylko w medihunter.py
 -i, --interval|brak
+--disable-phone-search|brak, Pozwala pominąć wizyty telefoniczne w wyszukiwaniu, dostępna tylko w medihunter.py
 --pushover_token|brak, Pushover Application Token
 --pushover_user|brak, Pushover user Token
 --pushover_device|brak, None nazwa device w Pushover domyślnie pusta=wszystkie
