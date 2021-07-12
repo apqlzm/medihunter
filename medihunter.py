@@ -14,7 +14,7 @@ from medicover_session import (
     MedicoverSession,
     load_available_search_params,
 )
-from medihunter_notifiers import pushover_notify, telegram_notify
+from medihunter_notifiers import pushover_notify, telegram_notify, xmpp_notify
 
 now = datetime.now()
 now_formatted = now.strftime("%Y-%m-%dT02:00:00.000Z")
@@ -48,7 +48,8 @@ def notify_external_device(message: str, notifier: str, **kwargs):
         pushover_notify(message, title)
     elif notifier == "telegram":
         telegram_notify(message)
-
+    elif notifier == "xmpp":
+        xmpp_notify(message)
 
 def process_appointments(
     appointments: List[Appointment], iteration_counter: int, notifier: str, **kwargs
@@ -113,7 +114,7 @@ def validate_arguments(**kwargs) -> bool:
 @click.option("--service", "-e", default=-1)
 @click.option("--interval", "-i", default=0, show_default=True)
 @click.option("--days-ahead", "-j", default=1, show_default=True)
-@click.option("--enable-notifier", "-n", type=click.Choice(["pushover", "telegram"]))
+@click.option("--enable-notifier", "-n", type=click.Choice(["pushover", "telegram", "xmpp"]))
 @click.option("--notification-title", "-t")
 @click.option("--user", prompt=True)
 @click.password_option(confirmation_prompt=False)

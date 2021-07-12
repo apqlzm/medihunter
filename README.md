@@ -12,8 +12,8 @@ Narzędzia służy do automatycznego wyszukiwania wizyt u lekarzy. Szczególnie 
 
 Dostępne są dwie wersje skryptu
 
-* **medihunter_pushover.py** - ma funkcje powiadomień pushover, możliwość wyszukiwania kilku klinik i kilku specjalistów jednocześnie. Kod wymaga refaktoru i w związku z tym nie będzie rozwijany. Z czasem planuje go usunąć.  
-* **medihunter.py** - tu dodawane są nowe funkcjonalności. Na chwilę obecną (2019-05-22) można ustawić powiadomienia pushover i w telegramie.
+* **medihunter_pushover.py** - ma funkcje powiadomień pushover, możliwość wyszukiwania kilku klinik i kilku specjalistów jednocześnie. Kod wymaga refaktoru i w związku z tym nie będzie rozwijany. Z czasem planuje go usunąć.
+* **medihunter.py** - tu dodawane są nowe funkcjonalności. Na chwilę obecną (2021-07-11) można ustawić powiadomienia pushover, w telegramie i przez xmpp.
 
 ## Instalacja
 
@@ -110,7 +110,7 @@ medihunter find-appointment --help
 medihunter show-params --help
 ```
 
-## Powiadomienia Pushover 
+## Powiadomienia Pushover
 
 dotyczy **medicover_pushover.py**
 
@@ -131,7 +131,7 @@ opcja|domyślna wartość
 -r, --region|Warszawa
 -b, --bookingtype|2, Typ wizyty 2 = Konsultacja (domyślnie), 1 = Badanie diagnostyczne
 -s, --specialization|brak Specjalizacja, podać w przypadku gdy Typ wizyty to Konsultacja (bookingtype = 2 domyślnie)
--e, --service|brak, Typ/identyfikator usługi, podać w przypadku gdy Typ wizyty to usługa (bookingtype = 1), działa analogicznie do specjalizacji 
+-e, --service|brak, Typ/identyfikator usługi, podać w przypadku gdy Typ wizyty to usługa (bookingtype = 1), działa analogicznie do specjalizacji
 -c, --clinic|wszystkie jakie są w regionie/mieście, można użyć parametru wielokrotnie w celu szukania wizyt w konkretnych klinikach
 -o, --doctor|wszyscy lekarze, można użyć parametru wielokrotnie w celu sprawdzenie kilku lekarzy
 -d, --start-date|data bieżąca (format: YYYY-mm-dd)
@@ -195,4 +195,34 @@ Teraz możemy wyszukać wizyty i otrzymać notyfikacje w Telegramie:
 
 ```shell
 medihunter find-appointment -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-22 -n telegram
+```
+
+## XMPP w medihunter.py
+
+Musimy posiadać 2 zarejestrowane konta XMPP:
+- pierwsze do wysyłania wiadomości, w przypadku odnalezienia wizyt zgodnych z zadanymi kryteriami wyszukiwania,
+- drugie do odbierania wiadomości z powiadomieniami, na którym będziemy zalogowani w dowolnym kliencie obsługującym XMPP (np. na komputerze/urządzeniu mobilnym).
+
+Eksportujemy nazwy obu kont XMPP i hasło logowania do pierwszego z kont (wartości ustawiamy swoje):
+
+```shell
+# bash
+export NOTIFIERS_XMPP_JID='nadawca_powiadomien@example.com'
+export NOTIFIERS_XMPP_PASSWORD='haslo_nadawcy_powiadomien'
+export NOTIFIERS_XMPP_RECEIVER='odbiorca_powiadomien@example.com'
+```
+
+lub
+
+```shell
+# fish
+set -x NOTIFIERS_XMPP_JID 'nadawca_powiadomien@example.com'
+set -x NOTIFIERS_XMPP_PASSWORD 'haslo_nadawcy_powiadomien'
+set -x NOTIFIERS_XMPP_RECEIVER 'odbiorca_powiadomien@example.com'
+```
+
+Teraz możemy wyszukać wizyty i otrzymać notyfikacje poprzez XMPP:
+
+```shell
+medihunter find-appointment -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-22 -n xmpp
 ```
