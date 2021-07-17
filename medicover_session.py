@@ -8,7 +8,8 @@ import requests
 from bs4 import BeautifulSoup
 
 Appointment = namedtuple(
-    "Appointment", ["doctor_name", "clinic_name", "appointment_datetime", "is_phone_consultation"]
+    "Appointment",
+    ["doctor_name", "clinic_name", "appointment_datetime", "is_phone_consultation"],
 )
 
 
@@ -132,23 +133,31 @@ class MedicoverSession:
         data = self.form_to_dict(response.text)
         next_referer = response.url
 
+        self.headers.update(
+            {
+                "Referer": "https://oauth.medicover.pl/",
+                "Origin": "https://oauth.medicover.pl/",
+                "Host": "mol.medicover.pl",
+                "Content-Type": "application/x-www-form-urlencoded",
+            }
+        )
         # 8 POST
         response = self.session.post(
             "https://mol.medicover.pl/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn",
-            headers=self.headers.update({"Referer": next_referer}),
+            headers=self.headers,
             data=data,
         )
 
-        # 9. GET
-        response = self.session.get(
-            "https://mol.medicover.pl/",
-            headers=self.headers.update(
-                {
-                    "Referer": "https://mol.medicover.pl/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn"
-                }
-            ),
-            data=data,
+        del self.headers["Origin"]
+        del self.headers["Content-Type"]
+        self.headers.update(
+            {
+                "Referer": "https://mol.medicover.pl/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn",
+            }
         )
+        # 9. GET
+        response = self.session.get("https://mol.medicover.pl/", headers=self.headers)
+        response.raise_for_status()
         return response
 
     def _parse_search_results(self, result):
@@ -187,18 +196,17 @@ class MedicoverSession:
             return
 
         BASE_URL = "mol.medicover.pl"
-        headers = self.session.headers
-        headers.update(
-            {
-                "Host": BASE_URL,
-                "Accept": "*/*",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-                "Referer": "https://mol.medicover.pl/MyVisits",
-            }
-        )
+
+        headers = {
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Host": BASE_URL,
+            "Origin": "https://mol.medicover.pl",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0",
+        }
 
         region_id = int(kwargs["region"])
         service_ids = (
@@ -209,7 +217,11 @@ class MedicoverSession:
         clinic_ids = [kwargs["clinic"]] if kwargs["clinic"] > 0 else []
         doctor_ids = [kwargs["doctor"]] if kwargs["doctor"] > 0 else []
 
-        disable_phone_search = kwargs["disable_phone_search"] if "disable_phone_search" in kwargs else False
+        disable_phone_search = (
+            kwargs["disable_phone_search"]
+            if "disable_phone_search" in kwargs
+            else False
+        )
 
         search_params = {
             "regionIds": [region_id],
@@ -232,6 +244,7 @@ class MedicoverSession:
             params={"language": "pl-PL"},
             headers=headers,
         )
+
         try:
             appointments = self._parse_search_results(result)
         except KeyError as exc:
@@ -269,7 +282,6 @@ class MedicoverSession:
         next_url = "https://mol.medicover.pl/Users/Account/LogOff"
         self.headers.update({"Referer": "https://mol.medicover.pl/"})
         self.headers.update(self.session.headers)
-        # print(self.headers)
         response = self.session.get(next_url, headers=self.headers)
         self.session.close()
         return response
