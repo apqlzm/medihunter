@@ -69,8 +69,8 @@ def process_appointments(
     for appointment in appointments:
         if duplicate_checker(appointment):
             echo_appointment(appointment)
-            notification_message += f"{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}\n"
-
+            notification_message += f"{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}" +(" (Telefonicznie)\n" if appointment.is_phone_consultation else " (Stacjonarnie)\n")
+ 
     if notification_message:
         notification_title = kwargs.get("notification_title")
         notify_external_device(
