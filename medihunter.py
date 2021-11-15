@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from typing import Callable, List
 
 import click
+import os
+from dotenv import load_dotenv
 
 from medicover_session import (
     Appointment,
@@ -16,6 +18,7 @@ from medicover_session import (
 )
 from medihunter_notifiers import pushover_notify, telegram_notify, xmpp_notify
 
+load_dotenv()
 now = datetime.now()
 now_formatted = now.strftime("%Y-%m-%dT02:00:00.000Z")
 
@@ -70,7 +73,7 @@ def process_appointments(
         if duplicate_checker(appointment):
             echo_appointment(appointment)
             notification_message += f"{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}" +(" (Telefonicznie)\n" if appointment.is_phone_consultation else " (Stacjonarnie)\n")
- 
+
     if notification_message:
         notification_title = kwargs.get("notification_title")
         notify_external_device(
@@ -116,8 +119,8 @@ def validate_arguments(**kwargs) -> bool:
 @click.option("--days-ahead", "-j", default=1, show_default=True)
 @click.option("--enable-notifier", "-n", type=click.Choice(["pushover", "telegram", "xmpp"]))
 @click.option("--notification-title", "-t")
-@click.option("--user", prompt=True)
-@click.password_option(confirmation_prompt=False)
+@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
+@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
 @click.option("--disable-phone-search", is_flag=True)
 def find_appointment(
     user,
@@ -158,10 +161,10 @@ def find_appointment(
     try:
         med_session.log_in()
     except Exception:
-        click.secho("Unsuccessful logging in", fg="red")
+        click.secho(f"Unsuccessful logging in as {user}", fg="red")
         return
 
-    click.echo("Logged in")
+    click.echo(f"Logged in as {user}")
 
     med_session.load_search_form()
 
@@ -228,16 +231,16 @@ def show_params(field_name):
 
 
 @click.command()
-@click.option("--user", prompt=True)
-@click.password_option(confirmation_prompt=False)
+@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
+@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
 def my_plan(user, password):
     med_session = MedicoverSession(username=user, password=password)
     try:
         med_session.log_in()
     except Exception:
-        click.secho("Unsuccessful logging in", fg="red")
+        click.secho(f"Unsuccessful logging in as {user}", fg="red")
         return
-    click.echo("Logged in")
+    click.echo(f"Logged in as {user}")
     plan = med_session.get_plan()
 
     with open("plan.tsv", mode="wt", encoding="utf-8") as f:
@@ -245,16 +248,16 @@ def my_plan(user, password):
 
 
 @click.command()
-@click.option("--user", prompt=True)
-@click.password_option(confirmation_prompt=False)
+@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
+@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
 def my_appointments(user, password):
     med_session = MedicoverSession(username=user, password=password)
     try:
         med_session.log_in()
     except Exception:
-        click.secho("Unsuccessful logging in", fg="red")
+        click.secho(f"Unsuccessful logging in as {user}", fg="red")
         return
-    click.echo("Logged in")
+    click.echo(f"Logged in as {user}")
     appointments = med_session.get_appointments()
 
     planned_appointments = list(filter(lambda a: datetime.strptime(

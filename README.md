@@ -29,7 +29,15 @@ Przechodzimy do katalogu ze źródłem i odpalamy
 pip install --editable .
 ```
 
-Od teraz mamy dostępną w virtualenvie komendę **medihunter**
+Od teraz mamy dostępną w virtualenvie komendę: `medihunter`
+
+Jeśli nie chcemy być za każdym razem pytani o login i hasło i/lub nie chcemy podawać ich jawnie w terminalu poprzez `--user login --password hasło` to możemy zapisać je w pliku `.env`:
+```
+MEDICOVER_USER=login
+MEDICOVER_PASS=hasło
+```
+
+Najprościej skopiować przykładowy plik `.env.example` z głównego katalogu jako `.env` i uzupełnić w nim dane.
 
 ## Dostępne subkomendy
 
