@@ -153,15 +153,9 @@ def find_appointment(
         return
 
     iteration_counter = 1
-    med_session = MedicoverSession(username=user, password=password)
-
-    try:
-        med_session.log_in()
-    except Exception:
-        click.secho("Unsuccessful logging in", fg="red")
+    med_session = login(user, password)
+    if not med_session:
         return
-
-    click.echo("Logged in")
 
     med_session.load_search_form()
 
@@ -231,30 +225,33 @@ def show_params(field_name):
 @click.option("--user", prompt=True)
 @click.password_option(confirmation_prompt=False)
 def my_plan(user, password):
-    med_session = MedicoverSession(username=user, password=password)
-    try:
-        med_session.log_in()
-    except Exception:
-        click.secho("Unsuccessful logging in", fg="red")
+    med_session = login(user, password)
+    if not med_session:
         return
-    click.echo("Logged in")
     plan = med_session.get_plan()
 
     with open("plan.tsv", mode="wt", encoding="utf-8") as f:
         f.write(plan)
 
 
-@click.command()
-@click.option("--user", prompt=True)
-@click.password_option(confirmation_prompt=False)
-def my_appointments(user, password):
+def login(user, password):
     med_session = MedicoverSession(username=user, password=password)
     try:
         med_session.log_in()
     except Exception:
         click.secho("Unsuccessful logging in", fg="red")
-        return
+        return False
     click.echo("Logged in")
+    return med_session
+
+
+@click.command()
+@click.option("--user", prompt=True)
+@click.password_option(confirmation_prompt=False)
+def my_appointments(user, password):
+    med_session = login(user, password)
+    if not med_session:
+        return
     appointments = med_session.get_appointments()
 
     planned_appointments = list(filter(lambda a: datetime.strptime(
