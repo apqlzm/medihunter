@@ -11,7 +11,8 @@ setup(
         'beautifulsoup4',
         'python-pushover',
         'notifiers',
-        'xmpppy'
+        'xmpppy',
+        'python-dotenv'
     ],
     entry_points='''
         [console_scripts]
