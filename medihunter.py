@@ -2,7 +2,6 @@
 this is a startpoint for adding new features
 """
 
-import json
 import time
 from datetime import datetime, timedelta
 from typing import Callable, List

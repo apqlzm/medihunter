@@ -1,11 +1,18 @@
 import json
 import os
-import re
 from collections import namedtuple
 from datetime import datetime, timedelta
 
 import requests
 from bs4 import BeautifulSoup
+
+
+BASE_HOST = "mol.medicover.pl"
+BASE_URL = "https://"+BASE_HOST
+
+BASE_OAUTH_URL = "https://oauth.medicover.pl"
+
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0"
 
 Appointment = namedtuple(
     "Appointment",
@@ -23,7 +30,7 @@ class MedicoverSession:
         self.password = password
         self.session = requests.Session()
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0",
+            "User-Agent": USER_AGENT,
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "pl,en-US,en;q=0.5",
             "Accept-Encoding": "gzip, deflate, br",
@@ -71,7 +78,7 @@ class MedicoverSession:
 
         # 1. GET https://mol.medicover.pl/Users/Account/LogOn?ReturnUrl=%2F
         response = self.session.get(
-            "https://mol.medicover.pl/Users/Account/LogOn?ReturnUrl=%2F",
+            BASE_URL + "/Users/Account/LogOn?ReturnUrl=%2F",
             headers=self.headers,
             allow_redirects=False,
         )
@@ -95,7 +102,7 @@ class MedicoverSession:
         # https://oauth.medicover.pl/external?provider=IS3&signin=944f8051df4165a710e592dd7f8a&owner=Mcov_Mol&ui_locales=pl-PL
 
         response = self.session.get(
-            "https://oauth.medicover.pl/external",
+            "%s/external" % BASE_OAUTH_URL,
             headers=self.headers.update({"Referer": next_referer}),
             params={
                 "provider": "IS3",
@@ -125,7 +132,7 @@ class MedicoverSession:
 
         # 7. POST
         response = self.session.post(
-            "https://oauth.medicover.pl/signin-oidc",
+            "%s/signin-oidc" % BASE_OAUTH_URL,
             headers=self.headers,
             data=data
             # , allow_redirects=False
@@ -135,15 +142,15 @@ class MedicoverSession:
 
         self.headers.update(
             {
-                "Referer": "https://oauth.medicover.pl/",
-                "Origin": "https://oauth.medicover.pl/",
-                "Host": "mol.medicover.pl",
+                "Referer": ("%s/" % BASE_OAUTH_URL),
+                "Origin": ("%s/" % BASE_OAUTH_URL),
+                "Host": BASE_HOST,
                 "Content-Type": "application/x-www-form-urlencoded",
             }
         )
         # 8 POST
         response = self.session.post(
-            "https://mol.medicover.pl/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn",
+            BASE_URL+"/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn",
             headers=self.headers,
             data=data,
         )
@@ -152,11 +159,11 @@ class MedicoverSession:
         del self.headers["Content-Type"]
         self.headers.update(
             {
-                "Referer": "https://mol.medicover.pl/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn",
+                "Referer": BASE_URL+"/Medicover.OpenIdConnectAuthentication/Account/OAuthSignIn",
             }
         )
         # 9. GET
-        response = self.session.get("https://mol.medicover.pl/", headers=self.headers)
+        response = self.session.get(BASE_URL+"/", headers=self.headers)
         response.raise_for_status()
         return response
 
@@ -195,7 +202,7 @@ class MedicoverSession:
         ):
             return
 
-        BASE_URL = "mol.medicover.pl"
+
 
         headers = {
             "Accept": "application/json, text/plain, */*",
@@ -203,9 +210,9 @@ class MedicoverSession:
             "Accept-Language": "en-US,en;q=0.5",
             "Connection": "keep-alive",
             "Content-Type": "application/json",
-            "Host": BASE_URL,
-            "Origin": "https://mol.medicover.pl",
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0",
+            "Host": BASE_HOST,
+            "Origin": BASE_URL,
+            "User-Agent": USER_AGENT,
         }
 
         region_id = int(kwargs["region"])
@@ -239,7 +246,7 @@ class MedicoverSession:
         }
 
         result = self.session.post(
-            f"https://{BASE_URL}/api/MyVisits/SearchFreeSlotsToBook",
+            f"{BASE_URL}/api/MyVisits/SearchFreeSlotsToBook",
             json=search_params,
             params={"language": "pl-PL"},
             headers=headers,
@@ -273,14 +280,14 @@ class MedicoverSession:
 
     def load_search_form(self):
         return self.session.get(
-            "https://mol.medicover.pl/MyVisits",
+            BASE_URL + "/MyVisits",
             params={"bookingTypeId": 2, "mex": "True", "pfm": 1},
         )
 
     def log_out(self):
         """Logout from Medicover website"""
-        next_url = "https://mol.medicover.pl/Users/Account/LogOff"
-        self.headers.update({"Referer": "https://mol.medicover.pl/"})
+        next_url = BASE_URL+"/Users/Account/LogOff"
+        self.headers.update({"Referer": BASE_URL + "/"})
         self.headers.update(self.session.headers)
         response = self.session.get(next_url, headers=self.headers)
         self.session.close()
@@ -290,8 +297,13 @@ class MedicoverSession:
         """Download Medicover plan"""
         output = ""
         medical_services_website = self.session.get(
-            "https://mol.medicover.pl/Medicover.MedicalServices/MedicalServices"
+            BASE_URL + "/Medicover.MedicalServices/MedicalServices", headers={
+                "Host": BASE_HOST,
+                "Origin": BASE_URL,
+                "User-Agent": USER_AGENT,
+            }
         )
+        medical_services_website.raise_for_status()
         soup = BeautifulSoup(medical_services_website.content, "lxml")
         drop_down = soup.find("select")
         drop_down_options = drop_down.find_all("option")
@@ -300,8 +312,14 @@ class MedicoverSession:
             if option_id == "":
                 continue
             option_html = self.session.get(
-                f"https://mol.medicover.pl/MedicalServices/MedicalServices/ShowResults?serviceId={option_id}"
+                f"{BASE_URL}/MedicalServices/MedicalServices/ShowResults?serviceId={option_id}"
+                , headers={
+                    "Host": BASE_HOST,
+                    "Origin": BASE_URL,
+                    "User-Agent": USER_AGENT,
+                }
             )
+            option_html.raise_for_status()
             soup2 = BeautifulSoup(option_html.content, "lxml")
             option_header = soup2.find("h4").text
             option_header = option_header.replace("\r\n", "").replace("\n", "")
@@ -323,16 +341,20 @@ class MedicoverSession:
         page = 1
         while True:
             response = self.session.post(
-                "https://mol.medicover.pl/api/MyVisits/SearchVisitsToView",
+                BASE_URL + "/api/MyVisits/SearchVisitsToView",
                 headers={
                     # Makes the response come as json.
                     "X-Requested-With": "XMLHttpRequest",
+                    "Host": BASE_HOST,
+                    "Origin": BASE_URL,
+                    "User-Agent": USER_AGENT,
                 },
                 data={
                     "Page": page,
                     "PageSize": 12,
                 },
             )
+            response.raise_for_status()
             response_json = response.json()
             for r in response_json["items"]:
                 appointments.append(self.convert_search_result_to_appointment(r))

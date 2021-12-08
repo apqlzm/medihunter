@@ -11,7 +11,8 @@ setup(
         'beautifulsoup4',
         'python-pushover',
         'notifiers',
-        'xmpppy'
+        'xmpppy',
+        'lxml'
     ],
     entry_points='''
         [console_scripts]
