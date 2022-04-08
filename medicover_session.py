@@ -122,6 +122,8 @@ class MedicoverSession:
         # https://login.medicover.pl/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dis3...
         response = self.session.post(login_url, headers=self.headers, data=data)
         data = self.form_to_dict(response.text)
+        if not data:
+             raise RuntimeError("Cannot log in. Probably invalid user/pass and/or account locked (for e.g. 15 minutes)")
 
         # 7. POST
         response = self.session.post(
