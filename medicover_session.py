@@ -42,6 +42,15 @@ class MedicoverSession:
                 data["__RequestVerificationToken"] = input_tag["value"]
         return data
 
+    def extract_data_from_mfa_form(self, page_text: str, code: str):
+        """ Extract values from mfa form fields. """
+        data = {"Code": code, "IsDeviceTrusted": "true"}
+        soup = BeautifulSoup(page_text, "html.parser")
+        for input_tag in soup.find_all("input"):
+            if input_tag["name"] == "__RequestVerificationToken":
+                data["__RequestVerificationToken"] = input_tag["value"]
+        return data
+
     def form_to_dict(self, page_text):
         """ Extract values from input fields. """
         data = {}
@@ -121,6 +130,15 @@ class MedicoverSession:
         # 6. POST
         # https://login.medicover.pl/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dis3...
         response = self.session.post(login_url, headers=self.headers, data=data)
+
+        if '/Account/mfa?' in response.url:
+            # 6a. POST
+            # https://login.medicover.pl/Account/mfa?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dis3...
+            code = input("Enter the code received by SMS: ")
+            mfa_url = response.url
+            data = self.extract_data_from_mfa_form(response.text, code)
+            response = self.session.post(mfa_url, headers=self.headers, data=data)
+
         data = self.form_to_dict(response.text)
         if not data:
              raise RuntimeError("Cannot log in. Probably invalid user/pass and/or account locked (for e.g. 15 minutes)")
