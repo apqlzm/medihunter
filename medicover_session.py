@@ -5,6 +5,8 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 
 import requests
+import appdirs
+import pickle
 from bs4 import BeautifulSoup
 
 Appointment = namedtuple(
@@ -30,6 +32,19 @@ class MedicoverSession:
             "Connection": "keep-alive",
             "Upgrade-Insecure-Requests": "1",
         }
+        self.cookies_path = appdirs.user_cache_dir("medihunter", "medihunter") + "/cookies"
+
+    def save_cookies(self):
+        os.makedirs(os.path.dirname(self.cookies_path), exist_ok=True)
+        with open(self.cookies_path, 'wb') as f:
+            pickle.dump(self.session.cookies, f)
+
+    def load_cookies(self):
+        try:
+            with open(self.cookies_path, 'rb') as f:
+                self.session.cookies.update(pickle.load(f))
+        except:
+            pass
 
     def extract_data_from_login_form(self, page_text: str):
         """ Extract values from input fields and prepare data for login request. """
@@ -77,6 +92,17 @@ class MedicoverSession:
 
     def log_in(self):
         """Login to Medicover website"""
+        self.load_cookies()
+
+        # Check whether a previous session is still valid
+        # 0. GET https://mol.medicover.pl/
+        response = self.session.get(
+            "https://mol.medicover.pl/",
+            headers=self.headers,
+            allow_redirects=False)
+
+        if response.status_code == 200:
+            return response
 
         # 1. GET https://mol.medicover.pl/Users/Account/LogOn?ReturnUrl=%2F
         response = self.session.get(
@@ -178,6 +204,7 @@ class MedicoverSession:
         # 9. GET
         response = self.session.get("https://mol.medicover.pl/", headers=self.headers)
         response.raise_for_status()
+        self.save_cookies()
         return response
 
     def _parse_search_results(self, result):
@@ -304,6 +331,7 @@ class MedicoverSession:
         self.headers.update(self.session.headers)
         response = self.session.get(next_url, headers=self.headers)
         self.session.close()
+        self.save_cookies()
         return response
 
     def get_plan(self):
