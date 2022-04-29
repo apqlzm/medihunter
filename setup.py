@@ -12,7 +12,8 @@ setup(
         'python-pushover',
         'notifiers',
         'xmpppy',
-        'python-dotenv'
+        'python-dotenv',
+        'appdirs'
     ],
     entry_points='''
         [console_scripts]
