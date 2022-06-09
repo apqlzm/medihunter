@@ -12,6 +12,9 @@ setup(
         'python-pushover',
         'notifiers',
         'xmpppy',
+        'python-dotenv',
+        'appdirs',
+        'xmpppy',
         'lxml'
     ],
     entry_points='''

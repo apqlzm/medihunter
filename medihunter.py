@@ -2,11 +2,14 @@
 this is a startpoint for adding new features
 """
 
+import json
 import time
 from datetime import datetime, timedelta
 from typing import Callable, List
 
 import click
+import os
+from dotenv import load_dotenv
 
 from medicover_session import (
     Appointment,
@@ -15,6 +18,7 @@ from medicover_session import (
 )
 from medihunter_notifiers import pushover_notify, telegram_notify, xmpp_notify
 
+load_dotenv()
 now = datetime.now()
 now_formatted = now.strftime("%Y-%m-%dT02:00:00.000Z")
 
@@ -115,8 +119,8 @@ def validate_arguments(**kwargs) -> bool:
 @click.option("--days-ahead", "-j", default=1, show_default=True)
 @click.option("--enable-notifier", "-n", type=click.Choice(["pushover", "telegram", "xmpp"]))
 @click.option("--notification-title", "-t")
-@click.option("--user", prompt=True)
-@click.password_option(confirmation_prompt=False)
+@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
+@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
 @click.option("--disable-phone-search", is_flag=True)
 def find_appointment(
     user,
@@ -221,8 +225,8 @@ def show_params(field_name):
 
 
 @click.command()
-@click.option("--user", prompt=True)
-@click.password_option(confirmation_prompt=False)
+@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
+@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
 def my_plan(user, password):
     med_session = login(user, password)
     if not med_session:
@@ -245,8 +249,8 @@ def login(user, password):
 
 
 @click.command()
-@click.option("--user", prompt=True)
-@click.password_option(confirmation_prompt=False)
+@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
+@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
 def my_appointments(user, password):
     med_session = login(user, password)
     if not med_session:

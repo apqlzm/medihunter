@@ -4,3 +4,5 @@ beautifulsoup4==4.6.3
 python-pushover
 notifiers==1.0.3
 xmpppy==0.6.2
+python-dotenv=0.19.2
+appdirs==1.4.4
