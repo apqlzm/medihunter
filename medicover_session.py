@@ -137,7 +137,7 @@ class MedicoverSession:
         # https://oauth.medicover.pl/external?provider=IS3&signin=944f8051df4165a710e592dd7f8a&owner=Mcov_Mol&ui_locales=pl-PL
 
         response = self.session.get(
-            "%s/external" % BASE_OAUTH_URL,
+            f"{BASE_OAUTH_URL}/external",
             headers=self.headers.update({"Referer": next_referer}),
             params={
                 "provider": "IS3",
@@ -178,7 +178,7 @@ class MedicoverSession:
 
         # 7. POST
         response = self.session.post(
-            "%s/signin-oidc" % BASE_OAUTH_URL,
+            f"{BASE_OAUTH_URL}/signin-oidc",
             headers=self.headers,
             data=data
             # , allow_redirects=False
@@ -188,8 +188,8 @@ class MedicoverSession:
 
         self.headers.update(
             {
-                "Referer": ("%s/" % BASE_OAUTH_URL),
-                "Origin": ("%s/" % BASE_OAUTH_URL),
+                "Referer": f"{BASE_OAUTH_URL}/",
+                "Origin": f"{BASE_OAUTH_URL}/",
                 "Host": BASE_HOST,
                 "Content-Type": "application/x-www-form-urlencoded",
             }
