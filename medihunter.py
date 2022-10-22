@@ -73,7 +73,7 @@ def process_appointments(
         if duplicate_checker(appointment):
             echo_appointment(appointment)
             notification_message += f"{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}" +(" (Telefonicznie)\n" if appointment.is_phone_consultation else " (Stacjonarnie)\n")
-
+ 
     if notification_message:
         notification_title = kwargs.get("notification_title")
         notify_external_device(
@@ -156,15 +156,9 @@ def find_appointment(
         return
 
     iteration_counter = 1
-    med_session = MedicoverSession(username=user, password=password)
-
-    try:
-        med_session.log_in()
-    except Exception:
-        click.secho(f"Unsuccessful logging in as {user}", fg="red")
+    med_session = login(user, password)
+    if not med_session:
         return
-
-    click.echo(f"Logged in as {user}")
 
     med_session.load_search_form()
 
@@ -234,30 +228,33 @@ def show_params(field_name):
 @click.option("--user", prompt=True, envvar='MEDICOVER_USER')
 @click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
 def my_plan(user, password):
-    med_session = MedicoverSession(username=user, password=password)
-    try:
-        med_session.log_in()
-    except Exception:
-        click.secho(f"Unsuccessful logging in as {user}", fg="red")
+    med_session = login(user, password)
+    if not med_session:
         return
-    click.echo(f"Logged in as {user}")
     plan = med_session.get_plan()
 
     with open("plan.tsv", mode="wt", encoding="utf-8") as f:
         f.write(plan)
 
 
-@click.command()
-@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
-@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
-def my_appointments(user, password):
+def login(user, password):
     med_session = MedicoverSession(username=user, password=password)
     try:
         med_session.log_in()
     except Exception:
-        click.secho(f"Unsuccessful logging in as {user}", fg="red")
+        click.secho("Unsuccessful logging in", fg="red")
+        return False
+    click.echo("Logged in")
+    return med_session
+
+
+@click.command()
+@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
+@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
+def my_appointments(user, password):
+    med_session = login(user, password)
+    if not med_session:
         return
-    click.echo(f"Logged in as {user}")
     appointments = med_session.get_appointments()
 
     planned_appointments = list(filter(lambda a: datetime.strptime(

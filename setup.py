@@ -13,7 +13,9 @@ setup(
         'notifiers',
         'xmpppy',
         'python-dotenv',
-        'appdirs'
+        'appdirs',
+        'xmpppy',
+        'lxml'
     ],
     entry_points='''
         [console_scripts]
