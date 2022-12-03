@@ -115,7 +115,7 @@ def validate_arguments(**kwargs) -> bool:
 @click.option("--start-time", "-a", default="0:00", show_default=True)
 @click.option("--end-time", "-g", default="23:59", show_default=True)
 @click.option("--service", "-e", default=-1)
-@click.option("--interval", "-i", default=0, show_default=True)
+@click.option("--interval", "-i", default=0, show_default=True, help='Checking interval in minutes')
 @click.option("--days-ahead", "-j", default=1, show_default=True)
 @click.option("--enable-notifier", "-n", type=click.Choice(["pushover", "telegram", "xmpp"]))
 @click.option("--notification-title", "-t")
