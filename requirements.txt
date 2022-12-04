@@ -1,8 +1,7 @@
 Click==7.0
-requests==2.20.0
+requests==2.20.1
 beautifulsoup4==4.6.3
-python-pushover
 notifiers==1.0.3
 xmpppy==0.6.2
-python-dotenv=0.19.2
+python-dotenv==0.19.2
 appdirs==1.4.4
