@@ -1,20 +1,21 @@
 import json
 import os
+import pickle
 from collections import namedtuple
 from datetime import datetime, timedelta
 
-import requests
 import appdirs
-import pickle
+import requests
 from bs4 import BeautifulSoup
-
+from fake_useragent import UserAgent
 
 BASE_HOST = "mol.medicover.pl"
 BASE_URL = "https://"+BASE_HOST
 
 BASE_OAUTH_URL = "https://oauth.medicover.pl"
 
-USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0"
+ua = UserAgent()
+USER_AGENT = ua.random
 
 Appointment = namedtuple(
     "Appointment",
