@@ -6,3 +6,4 @@ xmpppy==0.6.2
 python-dotenv==0.19.2
 appdirs==1.4.4
 fake-useragent==1.1.0
+lxml==4.9.1
