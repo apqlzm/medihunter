@@ -68,7 +68,7 @@ medihunter find-appointment -s 27962
 Oczywiście znalezienie wizyty do endokrynologa nie jest takie proste, więc ustawmy żeby wyszukiwarka sprawdzała czy jest coś dostępne co 5 minut
 
 ```bash
-medihunter find-appointment -s 27962 -i 1
+medihunter find-appointment -s 27962 -i 5
 ```
 
 a może chcemy poszukać konkretnych endokrynolgów o ID: 12345 i 0987? **tylko w medicover_pushover.py**
