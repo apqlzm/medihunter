@@ -46,11 +46,11 @@ duplicate_checker = make_duplicate_checker()
 
 def notify_external_device(message: str, notifier: str, **kwargs):
     # TODO: add more notification providers
+    title = kwargs.get("notification_title")
     if notifier == "pushover":
-        title = kwargs.get("notification_title")
         pushover_notify(message, title)
     elif notifier == "telegram":
-        telegram_notify(message)
+        telegram_notify(message, title)
     elif notifier == "xmpp":
         xmpp_notify(message)
 
