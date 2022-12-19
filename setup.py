@@ -6,6 +6,7 @@ setup(
     py_modules=['medihunter'],
     include_package_data=True,
     install_requires=[
+        'fake-useragent',
         'click',
         'requests',
         'beautifulsoup4',

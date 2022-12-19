@@ -234,3 +234,22 @@ Teraz możemy wyszukać wizyty i otrzymać notyfikacje poprzez XMPP:
 ```shell
 medihunter find-appointment -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-22 -n xmpp
 ```
+
+## Docker
+Aby uruchomić aplikację w kontenerze należy w pierwszej kolejności zbudować obraz
+
+```shell
+docker build -t medihunter .
+```
+
+Następnie uruchamiamy kontener używając komendę run
+```shell
+docker run -it medihunter find-appointment --user 00000 --password psw1234 -r 204 -s 4798
+```
+
+Możliwe jest także użycie zmiennych środowiskowych lub pliku .env
+```shell
+docker run -it  -e MEDICOVER_USER=00000 -e MEDICOVER_PASS=psw1234 medihunter find-appointment -r 204 -s 4798d
+
+docker run -it --env-file=.env medihunter find-appointment -r 204 -s 4798
+```
