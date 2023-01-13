@@ -20,7 +20,7 @@ from medihunter_notifiers import pushover_notify, telegram_notify, xmpp_notify
 
 load_dotenv()
 now = datetime.now()
-now_formatted = now.strftime("%Y-%m-%dT02:00:00.000Z")
+now_formatted = now.strftime("%Y-%m-%d")
 
 
 def make_duplicate_checker() -> Callable[[Appointment], bool]:
