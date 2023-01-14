@@ -20,8 +20,11 @@ def pushover_notify(message, title: str = None):
         print(f'Pushover notification failed:\n{r.errors}')
 
 
-def telegram_notify(message):
+def telegram_notify(message, title: str = None):
     try:
+        if title:
+            message = f"<b>{title}</b>\n{message}"
+
         r = telegram.notify(message=message,
                             parse_mode='html')
     except BadArguments as e:
