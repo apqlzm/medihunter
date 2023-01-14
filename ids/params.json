@@ -533,6 +533,18 @@
         {
             "text": "Medvit Medi Partner Piaseczno",
             "id": 29212
+        },
+	{
+            "text": "Centrum Medicover Gdynia Górskiego",
+            "id": 81678
+        },
+	{
+            "text": "Centrum Medicover Gdańsk Grunwaldzka",
+            "id": 21950
+        },
+	{
+            "text": "Centrum Medicover Gdańsk Forum",
+            "id": 56156
         }
     ],
     "availableLanguages": [
