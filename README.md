@@ -50,16 +50,16 @@ Najprościej skopiować przykładowy plik `.env.example` z głównego katalogu j
 
 Gdy wyszukujemy wizyty musimy podać miasto, placówkę medyczną, specjalizację (jaki to ma być lekarz), identyfikator lekarza (możliwość wybrania konkretnego lekarza), datę wizyty (wizyta zacznie się nie wcześniej niż ta data). Każdy z tych parametrów (z wyjątkiem daty) ma przypisany nr id. Żeby go poznać używamy do tego komendy *show-params*.
 
-id specjalizacji
-
-```bash
-medihunter show-params -f specialization
-```
-
 id miast
 
 ```bash
 medihunter show-params -f region
+```
+
+id specjalizacji
+
+```bash
+medihunter show-params -f specialization -r 204
 ```
 
 ### find-appointment

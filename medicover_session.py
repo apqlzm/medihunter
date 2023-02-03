@@ -415,27 +415,49 @@ class MedicoverSession:
             page += 1
         return appointments
 
+    def load_available_regions(self):
+        """Download available region names and ids."""
+        response = self.session.get(
+            BASE_URL + "/api/MyVisits/SearchFreeSlotsToBook/GetInitialFiltersData",
+                headers={
+                    "Host": BASE_HOST,
+                    "Origin": BASE_URL,
+                    "User-Agent": USER_AGENT,
+                },
+        )
+        response.raise_for_status()
+        response_json = response.json()
+        return response_json["regions"]
 
-def load_available_search_params(field_name):
-    FIELDS_NAMES = {
-        "specialization": "availableSpecializations",
-        "region": "availableRegions",
-        "clinic": "availableClinics",
-        "doctor": "availableDoctors",
-    }
+    def load_available_specializations(self, region, bookingtype):
+        """Download available specialization names and ids."""
+        response_json = self._get_filters_data(region=region, bookingtype=bookingtype)
+        return response_json["services"]
 
-    if field_name not in FIELDS_NAMES:
-        return
+    def load_available_clinics(self, region, bookingtype, specialization):
+        """Download available clinic names and ids."""
+        response_json = self._get_filters_data(region=region, bookingtype=bookingtype, specialization=specialization)
+        return response_json["clinics"]
 
-    field_name = FIELDS_NAMES[field_name]
+    def load_available_doctors(self, region, bookingtype, specialization, clinic):
+        """Download available doctor names and ids."""
+        response_json = self._get_filters_data(region=region, bookingtype=bookingtype, specialization=specialization, clinic=clinic)
+        return response_json["doctors"]
 
-    params_file_content = ""
-
-    params_path = os.path.join(os.path.dirname(__file__), "ids/params.json")
-
-    with open(params_path, encoding="utf-8") as f:
-        params_file_content = f.read()
-
-    params = json.loads(params_file_content)
-
-    return params[field_name]
+    def _get_filters_data(self, *args, **kwargs):
+        response = self.session.get(
+            BASE_URL + "/api/MyVisits/SearchFreeSlotsToBook/GetFiltersData",
+            params={
+                "regionIds": kwargs.get("region"),
+                "serviceTypeId": kwargs.get("bookingtype"),
+                "serviceIds": kwargs.get("specialization"),
+                "clinicIds": kwargs.get("clinic"),
+            },
+            headers={
+                "Host": BASE_HOST,
+                "Origin": BASE_URL,
+                "User-Agent": USER_AGENT,
+            },
+        )
+        response.raise_for_status()
+        return response.json()
