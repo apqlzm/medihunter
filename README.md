@@ -166,6 +166,28 @@ opcja|domyślna wartość
 --pushover_msgtitle|brak - prefix dodawany przed tytułem powiadomienia
 -t, --notification-title|brak, dostępna tylko w medihunter.py, wspierana tylko przez Pushover i Telegram
 
+## Pushbullet w medihunter.py
+
+Żeby działały powiadomienia pushbullet trzeba zrobić eksport (wartości ustawiamy swoje):
+
+```shell
+# bash
+export NOTIFIERS_PUSHBULLET_TOKEN=avykwnqc8ohyk73mo1bsuggsm3r4qf
+```
+
+lub
+
+```shell
+# fish
+set -x NOTIFIERS_PUSHBULLET_TOKEN avykwnqc8ohyk73mo1bsuggsm3r4qf
+```
+
+Teraz możemy wyszukać wizyty np. tak:
+
+```shell
+medihunter find-appointment -n pushbullet -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-15
+```
+
 ## Pushover w medihunter.py
 
 Żeby działały powiadomienia pushover trzeba zrobić eksport (wartości ustawiamy swoje):
