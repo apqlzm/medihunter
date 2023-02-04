@@ -385,7 +385,7 @@ class MedicoverSession:
 
         return output
 
-    def get_appointments(self):
+    def get_appointments(self, not_before):
         """Download all past and future appointments."""
         appointments = deque()
         page = 1
@@ -406,8 +406,15 @@ class MedicoverSession:
             )
             response.raise_for_status()
             response_json = response.json()
+            finish = False
             for r in response_json["items"]:
-                appointments.appendleft(self.convert_search_result_to_appointment(r))
+                appointment = self.convert_search_result_to_appointment(r)
+                if datetime.strptime(appointment.appointment_datetime, "%Y-%m-%dT%H:%M:%S") < not_before:
+                    finish = True
+                    break
+                appointments.appendleft(appointment)
+            if finish:
+                break
             if len(appointments) >= response_json["totalCount"]:
                 break
             # Just in case the condition above fails for some reason.

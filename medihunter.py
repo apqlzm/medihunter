@@ -257,13 +257,9 @@ def my_appointments(show_past, user, password):
     med_session = login(user, password)
     if not med_session:
         return
-    appointments = med_session.get_appointments()
+    appointments = med_session.get_appointments(datetime.fromtimestamp(0) if show_past else now)
 
     if not show_past:
-        appointments = list(filter(lambda a: datetime.strptime(
-            a.appointment_datetime, "%Y-%m-%dT%H:%M:%S"
-        ) >= now, appointments))
-
         if not appointments:
             click.echo("No planned appointments.")
             pass
