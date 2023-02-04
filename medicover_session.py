@@ -1,7 +1,7 @@
 import json
 import os
 import pickle
-from collections import namedtuple
+from collections import namedtuple, deque
 from datetime import datetime, timedelta
 
 import appdirs
@@ -387,7 +387,7 @@ class MedicoverSession:
 
     def get_appointments(self):
         """Download all past and future appointments."""
-        appointments = []
+        appointments = deque()
         page = 1
         while True:
             response = self.session.post(
@@ -407,14 +407,14 @@ class MedicoverSession:
             response.raise_for_status()
             response_json = response.json()
             for r in response_json["items"]:
-                appointments.append(self.convert_search_result_to_appointment(r))
+                appointments.appendleft(self.convert_search_result_to_appointment(r))
             if len(appointments) >= response_json["totalCount"]:
                 break
             # Just in case the condition above fails for some reason.
             if not len(response_json["items"]):
                 break
             page += 1
-        return appointments
+        return list(appointments)
 
 
 def load_available_search_params(field_name):
