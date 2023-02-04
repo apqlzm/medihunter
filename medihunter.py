@@ -81,10 +81,11 @@ def process_appointments(
         )
 
 
-def echo_appointment(appointment):
+def echo_appointment(appointment, verbose=False):
     click.echo(
         appointment.appointment_datetime
         + " "
+        + (click.style(appointment.specialization_name + " ", fg="bright_blue") if verbose else "")
         + click.style(appointment.doctor_name, fg="bright_green")
         + " "
         + appointment.clinic_name
@@ -270,7 +271,7 @@ def my_appointments(show_past, user, password):
             click.echo("Showing only planned appointments:")
 
     for appointment in appointments:
-        echo_appointment(appointment)
+        echo_appointment(appointment, verbose=True)
 
 
 @click.group()

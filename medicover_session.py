@@ -19,7 +19,7 @@ USER_AGENT = ua.random
 
 Appointment = namedtuple(
     "Appointment",
-    ["doctor_name", "clinic_name", "appointment_datetime", "is_phone_consultation"],
+    ["doctor_name", "clinic_name", "specialization_name", "appointment_datetime", "is_phone_consultation"],
 )
 
 
@@ -233,6 +233,7 @@ class MedicoverSession:
         appointment = Appointment(
             doctor_name=r["doctorName"],
             clinic_name=r["clinicName"],
+            specialization_name=r["specializationName"].strip(),
             appointment_datetime=r["appointmentDate"],
             is_phone_consultation=r["isPhoneConsultation"],
         )
