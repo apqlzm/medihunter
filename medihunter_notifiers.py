@@ -3,8 +3,22 @@ from notifiers.exceptions import BadArguments
 from os import environ
 from xmpp import *
 
+pushbullet = get_notifier('pushbullet')
 pushover = get_notifier('pushover')
 telegram = get_notifier('telegram')
+
+def pushbullet_notify(message, title: str = None):
+    try:
+        if title is None:
+            r = pushbullet.notify(message=message)
+        else:
+            r = pushbullet.notify(message=message, title=title)
+    except BadArguments as e:
+        print(f'Pushbullet failed\n{e}')
+        return
+
+    if r.status != 'Success':
+        print(f'Pushbullet notification failed:\n{r.errors}')
 
 def pushover_notify(message, title: str = None):
     try:

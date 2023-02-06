@@ -15,7 +15,7 @@ from medicover_session import (
     Appointment,
     MedicoverSession,
 )
-from medihunter_notifiers import pushover_notify, telegram_notify, xmpp_notify
+from medihunter_notifiers import pushbullet_notify, pushover_notify, telegram_notify, xmpp_notify
 
 load_dotenv()
 now = datetime.now()
@@ -46,6 +46,8 @@ duplicate_checker = make_duplicate_checker()
 def notify_external_device(message: str, notifier: str, **kwargs):
     # TODO: add more notification providers
     title = kwargs.get("notification_title")
+    if notifier == "pushbullet":
+        pushbullet_notify(message, title)
     if notifier == "pushover":
         pushover_notify(message, title)
     elif notifier == "telegram":
@@ -116,7 +118,7 @@ def validate_arguments(**kwargs) -> bool:
 @click.option("--service", "-e", default=-1)
 @click.option("--interval", "-i", default=0, show_default=True, help='Checking interval in minutes')
 @click.option("--days-ahead", "-j", default=1, show_default=True)
-@click.option("--enable-notifier", "-n", type=click.Choice(["pushover", "telegram", "xmpp"]))
+@click.option("--enable-notifier", "-n", type=click.Choice(["pushbullet", "pushover", "telegram", "xmpp"]))
 @click.option("--notification-title", "-t")
 @click.option("--user", prompt=True, envvar='MEDICOVER_USER')
 @click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
