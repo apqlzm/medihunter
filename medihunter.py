@@ -14,7 +14,6 @@ from dotenv import load_dotenv
 from medicover_session import (
     Appointment,
     MedicoverSession,
-    load_available_search_params,
 )
 from medihunter_notifiers import pushover_notify, telegram_notify, xmpp_notify
 
@@ -209,17 +208,50 @@ def find_appointment(
         time.sleep(interval * 60)
 
 
-FIELD_NAMES = ["specialization", "region", "clinic", "doctor"]
-
-
 @click.command()
-@click.option(
-    "-f", "--field-name", type=click.Choice(FIELD_NAMES), default="specialization"
-)
-def show_params(field_name):
-    params = load_available_search_params(field_name)
+@click.option("--field-name", "-f", type=click.Choice(["region", "specialization", "clinic", "doctor"]), required=True)
+@click.option("--region", "-r", type=int)
+@click.option("--bookingtype", "-b", type=int, default=2, show_default=True)
+@click.option("--specialization", "-s", type=int)
+@click.option("--clinic", "-c", type=int)
+@click.option("--user", prompt=True, envvar='MEDICOVER_USER')
+@click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
+def show_params(
+    field_name,
+    region,
+    bookingtype,
+    specialization,
+    clinic,
+    user,
+    password,
+):
+    get_params = None
+    if field_name == "region":
+        get_params = lambda: med_session.load_available_regions()
+    elif field_name == "specialization":
+        if not region:
+            raise click.UsageError(f"Option --region is mandatory when --fild-name={field_name}")
+        get_params = lambda: med_session.load_available_specializations(region, bookingtype)
+    elif field_name == "clinic":
+        if not region:
+            raise click.UsageError(f"Option --region is mandatory when --fild-name={field_name}")
+        if not specialization:
+            raise click.UsageError(f"Option --specialization is mandatory when --fild-name={field_name}")
+        get_params = lambda: med_session.load_available_clinics(region, bookingtype, specialization)
+    elif field_name == "doctor":
+        if not region:
+            raise click.UsageError(f"Option --region is mandatory when --fild-name={field_name}")
+        if not specialization:
+            raise click.UsageError(f"Option --specialization is mandatory when --fild-name={field_name}")
+        get_params = lambda: med_session.load_available_doctors(region, bookingtype, specialization, clinic)
+
+    med_session = login(user, password)
+    if not med_session:
+        return
+    params = get_params()
+
     for p in params:
-        text = p["text"]
+        text = p["text"].strip()
         id_ = p["id"]
         print(f" {text} (id={id_})")
 
