@@ -91,7 +91,7 @@ medihunter find-appointment -s 9 -c 174 -c 49088
 a co jeśli chcemy znaleźć wizytę u dowolnego ortopedy w Trójmieście w przeciągu następnych dwóch tygodni a nie za miesiąc? **bez daty rozpoczęcia nie działa**
 
 ```bash
-medihunter find-appointment -s 163 -d 2021-12-19 -f 2022-12-31 -r 200 
+medihunter find-appointment -s 163 -d 2021-12-19 -f 2022-12-31 -r 200
 ```
 
 Lub można dodać bezpośrednio do Crontaba jak poniżej **wpis w cronie działa tylko z medicover_pushover.py**
@@ -164,7 +164,7 @@ opcja|domyślna wartość
 --pushover_user|brak, Pushover user Token
 --pushover_device|brak, None nazwa device w Pushover domyślnie pusta=wszystkie
 --pushover_msgtitle|brak - prefix dodawany przed tytułem powiadomienia
--t, --notification-title|brak, dostępna tylko w medihunter.py, wspierana tylko przez Pushover i Telegram
+-t, --notification-title|brak, dostępna tylko w medihunter.py, wspierana tylko przez Pushover, Telegram i Gotify
 
 ## Pushbullet w medihunter.py
 
@@ -273,6 +273,42 @@ Teraz możemy wyszukać wizyty i otrzymać notyfikacje poprzez XMPP:
 ```shell
 medihunter find-appointment -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-22 -n xmpp
 ```
+
+## Gotify w medihunter.py
+
+[Gotify](https://gotify.net/) jest prostym serwisem do wysyłania powiadomień typu push głównie na urządzenia z systemem Android.
+Różni się od innych tego typu aplikacji, że jest w pełni open source oraz do przeznaczony do hostowania na własnym serwerze.
+
+W celu skorzystania z tej metody powiadomień musimy ustawić kilka zmiennych środowiskowych:
+
+```shell
+# bash
+export GOTIFY_TOKEN=AbCDeFg2yvapfPA
+export GOTIFY_HOST=https://gotify.my-server.com
+```
+
+lub
+
+```shell
+# fish
+set -x GOTIFY_TOKEN 'AbCDeFg2yvapfPA'
+set -x GOTIFY_HOST 'https://gotify.my-server.com'
+```
+
+lub w Windows z venv
+```shell
+set GOTIFY_TOKEN=AbCDeFg2yvapfPA
+set GOTIFY_HOST=https://gotify.my-server.com
+```
+
+Istnieje również opcjonalna zmienna `GOTIFY_PRIORITY` która pozwala na ustawienie priorytetu powiadomienia (domyślnie `5`).
+
+Teraz możemy wyszukać wizyty i otrzymać notyfikacje poprzez Gotify:
+
+```shell
+medihunter find-appointment -r 204 -s 4798 --user 00000 --password psw1234 -i 1 -d 2019-05-22 -n gotify
+```
+
 
 ## Docker
 Aby uruchomić aplikację w kontenerze należy w pierwszej kolejności zbudować obraz

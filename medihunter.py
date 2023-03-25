@@ -15,7 +15,7 @@ from medicover_session import (
     Appointment,
     MedicoverSession,
 )
-from medihunter_notifiers import pushbullet_notify, pushover_notify, telegram_notify, xmpp_notify
+from medihunter_notifiers import pushbullet_notify, pushover_notify, telegram_notify, xmpp_notify, gotify_notify
 
 load_dotenv()
 now = datetime.now()
@@ -54,6 +54,8 @@ def notify_external_device(message: str, notifier: str, **kwargs):
         telegram_notify(message, title)
     elif notifier == "xmpp":
         xmpp_notify(message)
+    elif notifier == "gotify":
+        gotify_notify(message, title)
 
 def process_appointments(
     appointments: List[Appointment], iteration_counter: int, notifier: str, **kwargs
@@ -74,7 +76,7 @@ def process_appointments(
         if duplicate_checker(appointment):
             echo_appointment(appointment)
             notification_message += f"{appointment.appointment_datetime} {appointment.doctor_name} {appointment.clinic_name}" +(" (Telefonicznie)\n" if appointment.is_phone_consultation else " (Stacjonarnie)\n")
- 
+
     if notification_message:
         notification_title = kwargs.get("notification_title")
         notify_external_device(
@@ -118,7 +120,7 @@ def validate_arguments(**kwargs) -> bool:
 @click.option("--service", "-e", default=-1)
 @click.option("--interval", "-i", default=0, show_default=True, help='Checking interval in minutes')
 @click.option("--days-ahead", "-j", default=1, show_default=True)
-@click.option("--enable-notifier", "-n", type=click.Choice(["pushbullet", "pushover", "telegram", "xmpp"]))
+@click.option("--enable-notifier", "-n", type=click.Choice(["pushbullet", "pushover", "telegram", "xmpp", "gotify"]))
 @click.option("--notification-title", "-t")
 @click.option("--user", prompt=True, envvar='MEDICOVER_USER')
 @click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
