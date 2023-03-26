@@ -1,7 +1,7 @@
 import json
 import os
 import pickle
-from collections import namedtuple
+from collections import namedtuple, deque
 from datetime import datetime, timedelta
 
 import appdirs
@@ -19,7 +19,7 @@ USER_AGENT = ua.random
 
 Appointment = namedtuple(
     "Appointment",
-    ["doctor_name", "clinic_name", "appointment_datetime", "is_phone_consultation"],
+    ["doctor_name", "clinic_name", "specialization_name", "appointment_datetime", "is_phone_consultation"],
 )
 
 
@@ -233,6 +233,7 @@ class MedicoverSession:
         appointment = Appointment(
             doctor_name=r["doctorName"],
             clinic_name=r["clinicName"],
+            specialization_name=r["specializationName"].strip(),
             appointment_datetime=r["appointmentDate"],
             is_phone_consultation=r["isPhoneConsultation"],
         )
@@ -384,9 +385,9 @@ class MedicoverSession:
 
         return output
 
-    def get_appointments(self):
+    def get_appointments(self, not_before):
         """Download all past and future appointments."""
-        appointments = []
+        appointments = deque()
         page = 1
         while True:
             response = self.session.post(
@@ -405,15 +406,22 @@ class MedicoverSession:
             )
             response.raise_for_status()
             response_json = response.json()
+            finish = False
             for r in response_json["items"]:
-                appointments.append(self.convert_search_result_to_appointment(r))
+                appointment = self.convert_search_result_to_appointment(r)
+                if datetime.strptime(appointment.appointment_datetime, "%Y-%m-%dT%H:%M:%S") < not_before:
+                    finish = True
+                    break
+                appointments.appendleft(appointment)
+            if finish:
+                break
             if len(appointments) >= response_json["totalCount"]:
                 break
             # Just in case the condition above fails for some reason.
             if not len(response_json["items"]):
                 break
             page += 1
-        return appointments
+        return list(appointments)
 
     def load_available_regions(self):
         """Download available region names and ids."""

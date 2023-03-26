@@ -82,10 +82,11 @@ def process_appointments(
         )
 
 
-def echo_appointment(appointment):
+def echo_appointment(appointment, verbose=False):
     click.echo(
         appointment.appointment_datetime
         + " "
+        + (click.style(appointment.specialization_name + " ", fg="bright_blue") if verbose else "")
         + click.style(appointment.doctor_name, fg="bright_green")
         + " "
         + appointment.clinic_name
@@ -283,23 +284,24 @@ def login(user, password):
 
 
 @click.command()
+@click.option("--show-past", default=False, is_flag=True, help='Also show past appointments')
 @click.option("--user", prompt=True, envvar='MEDICOVER_USER')
 @click.password_option(confirmation_prompt=False, envvar='MEDICOVER_PASS')
-def my_appointments(user, password):
+def my_appointments(show_past, user, password):
     med_session = login(user, password)
     if not med_session:
         return
-    appointments = med_session.get_appointments()
+    appointments = med_session.get_appointments(datetime.fromtimestamp(0) if show_past else now)
 
-    planned_appointments = list(filter(lambda a: datetime.strptime(
-        a.appointment_datetime, "%Y-%m-%dT%H:%M:%S"
-    ) >= now, appointments))
-    if planned_appointments:
-        click.echo("Showing only planned appointments:")
-        for planned_appointment in planned_appointments:
-            echo_appointment(planned_appointment)
-    else:
-        click.echo("No planned appointments.")
+    if not show_past:
+        if not appointments:
+            click.echo("No planned appointments.")
+            pass
+        else:
+            click.echo("Showing only planned appointments:")
+
+    for appointment in appointments:
+        echo_appointment(appointment, verbose=True)
 
 
 @click.group()
