@@ -2,6 +2,7 @@ from notifiers import get_notifier
 from notifiers.exceptions import BadArguments
 from os import environ
 from xmpp import *
+import requests
 
 pushbullet = get_notifier('pushbullet')
 pushover = get_notifier('pushover')
@@ -66,3 +67,30 @@ def xmpp_notify(message):
     except KeyError as e:
         print(f'XMPP notifications require NOTIFIERS_XMPP_JID, NOTIFIERS_XMPP_PASSWORD'
               f' and NOTIFIERS_XMPP_RECEIVER to be exported. Detailed exception:\n{e}')
+
+def gotify_notify(message, title: str = None):
+    try:
+        host = environ['GOTIFY_HOST']
+        token = environ['GOTIFY_TOKEN']
+    except KeyError as e:
+        print(f'GOTIFY notifications require GOTIFY_HOST (base url with port),'
+              f' GOTIFY_TOKEN to be exported. Detailed exception:\n{e}')
+        return
+
+    try:
+        prio = int(environ['GOTIFY_PRIORITY'])
+    except (KeyError, ValueError):
+        prio = 5
+
+    if title is None:
+        title = "medihunter"
+
+    try:
+        resp = requests.post(host+'/message?token='+token, json={
+            "message": message,
+            "priority": int(prio),
+            "title": title
+        })
+
+    except requests.exceptions.RequestException as e:
+        print(f'GOTIFY notification failed:\n{e}')
