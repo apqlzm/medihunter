@@ -1,5 +1,5 @@
 Click==7.0
-requests==2.20.1
+requests==2.31.0
 beautifulsoup4==4.6.3
 notifiers==1.0.3
 xmpppy==0.6.2
