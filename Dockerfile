@@ -2,8 +2,6 @@ FROM python:alpine3.17
 
 WORKDIR /app/
 
-COPY ids ids
-
 COPY ["medicover_session.py" ,"medihunter*.py", "setup.py", "/app/"]
 
 # Workaround for "use_2to3 is invalid" error
