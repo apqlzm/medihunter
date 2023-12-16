@@ -3,8 +3,6 @@ RUN apk add --no-cache libxml2 libxslt libxml2-dev libxslt-dev gcc musl-dev
 
 WORKDIR /app/
 
-COPY ids ids
-
 COPY ["medicover_session.py" ,"medihunter*.py", "setup.py", "/app/"]
 
 # Workaround for "use_2to3 is invalid" error
