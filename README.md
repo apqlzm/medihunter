@@ -1,5 +1,7 @@
 # medihunter
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U7U2Z939V)
+
 Narzędzia służy do automatycznego wyszukiwania wizyt u lekarzy. Szczególnie przydaje się gdy wizyty są trudno dostępne ;)
 
 **Działa z pythonem w wersji 3.6+**
